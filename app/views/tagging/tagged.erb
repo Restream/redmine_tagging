@@ -5,13 +5,16 @@
 <table class="tags">
   <% if @issues.size > 0 %>
     <tr>
-      <th colspan="2"><%= l(:label_issue_plural) %></th>
+      <th colspan="3"><%= l(:label_issue_plural) %></th>
     </tr>
 
     <% @issues.each do |issue| %>
       <tr>
         <td class="tagged">
-          <%= link_to(issue.subject, {:controller => "issues", :action => "show", :project_id => @project.identifier, :id => issue}) %>
+          <%= link_to("#{issue.tracker.name} #{issue.id}", {:controller => "issues", :action => "show", :project_id => @project.identifier, :id => issue}, {:class => (issue.closed? ? "closed" : "")}) %>
+        </td>
+        <td class="tagged">
+          <%= link_to(issue.subject, {:controller => "issues", :action => "show", :project_id => @project.identifier, :id => issue}, {:class => (issue.closed? ? "closed" : "")}) %>
         </td>
         <td class="tags">
           <% issue.tag_list_on(@project.identifier).sort.each do |tag| %>
@@ -29,7 +32,7 @@
 
     <% @wikipages.each do |page| %>
       <tr>
-        <td class="tagged">
+        <td colspan="2" class="tagged">
           <%= link_to(page.title, {:controller => "wiki", :action => "index", :id => @project.identifier, :page => page.title}) %>
         </td>
         <td class="tags">

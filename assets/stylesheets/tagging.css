@@ -10,3 +10,7 @@ table.tags th {
 table.tags td.tags {
   padding-left: 2em;
 }
+
+.tagged .closed {
+  text-decoration: line-through;
+}
