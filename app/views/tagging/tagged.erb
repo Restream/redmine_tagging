@@ -1,19 +1,43 @@
+<%- content_for :header_tags do %>
+  <%= stylesheet_link_tag 'tagging', :plugin => 'redmine_tagging' %>
+<% end %>
 <%= l(:tagging_selected_tags)%>: <% @tags.each do |tag| %> <%= tag %> <% end %><br/>
-<% if @issues.size > 0 %>
-  <h3><%= l(:label_issue_plural) %></h3>
-  <% @issues.each do |issue| %>
-    <%= link_to(issue.subject, {:controller => "issues", :action => "show", :project_id => @project.identifier, :id => issue}) %>:
-      <% issue.tag_list_on(@project.identifier).sort.each do |tag| %>
-        <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}) %>
-      <% end %><br/>
+<table class="tags">
+  <% if @issues.size > 0 %>
+    <tr>
+      <th colspan="2"><%= l(:label_issue_plural) %></th>
+    </tr>
+
+    <% @issues.each do |issue| %>
+      <tr>
+        <td class="tagged">
+          <%= link_to(issue.subject, {:controller => "issues", :action => "show", :project_id => @project.identifier, :id => issue}) %>
+        </td>
+        <td class="tags">
+          <% issue.tag_list_on(@project.identifier).sort.each do |tag| %>
+            <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}, {:class => 'tag'}) %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
   <% end %>
-<% end %>
-<% if @wikipages.size > 0 %>
-  <h3><%= l(:label_wiki_page_plural) %></h3>
-  <% @wikipages.each do |page| %>
-    <%= link_to(page.title, {:controller => "wiki", :action => "index", :id => @project.identifier, :page => page.title}) %>:
-      <% page.tag_list_on(@project.identifier).sort.each do |tag| %>
-        <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}) %>
-      <% end %><br/>
+
+  <% if @wikipages.size > 0 %>
+    <tr>
+      <th colspan="2"><%= l(:label_wiki_page_plural) %></th>
+    </tr>
+
+    <% @wikipages.each do |page| %>
+      <tr>
+        <td class="tagged">
+          <%= link_to(page.title, {:controller => "wiki", :action => "index", :id => @project.identifier, :page => page.title}) %>
+        </td>
+        <td class="tags">
+          <% page.tag_list_on(@project.identifier).sort.each do |tag| %>
+            <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}, {:class => 'tag'}) %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
   <% end %>
-<% end %>
+</table>
