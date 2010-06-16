@@ -21,7 +21,7 @@
   <h3><%= l(:tagging_tags) %></h3>
   <div id='tagcloud'>
     <% tags.each_pair do |tag, count| %>
-      <%= link_to("##{tag}",
+      <%= link_to("#{tag}",
             {:controller => "tagging", :action => "index", :project_id => project.identifier, :tags => tag},
             {:rel => count}) %>
     <% end %>
