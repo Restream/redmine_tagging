@@ -1,0 +1,29 @@
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js' type='text/javascript'></script>
+<%= javascript_include_tag('jquery.tagcloud.js', :plugin => 'redmine_tagging') %>
+<script type='text/javascript'>
+  $j = jQuery.noConflict();
+  $j(document).ready(function() {
+    $j('#tagcloud a').tagcloud({
+      size: {start: 10, end:18, unit: "pt"}
+    });
+  });
+</script>
+<%
+    tags = {}
+    Issue.tag_counts_on(project.identifier).each {|tag|
+      tags[tag.name] = tag.count
+    }
+    WikiPage.tag_counts_on(project.identifier).each {|tag|
+      tags[tag.name] = tags[tag.name].to_i + tag.count
+    }
+%>
+<% if tags.size > 0 %>
+  <h3><%= l(:tagging_tags)</h3>
+  <div id='tagcloud'>
+    <% tags.each_pair do |tag, count| %>
+      <%= link_to("##{tag}",
+            {:controller => "tagging", :action => "index", :project_id => project.identifier, :tags => tag},
+            {:rel => count}) %>
+    <% end %>
+  </div>
+<% end %>

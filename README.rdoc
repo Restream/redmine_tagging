@@ -1,0 +1,14 @@
+= tagging
+
+Simple tagging using wiki macros. In your issue or wikipage body you
+can use
+
+{{tag(some tags, here or-there)}}
+
+which will tag your object with #some #tags #here. Tags can only
+consist of letters, numbers or a dash, run together. spaces _or_
+commas will act as a separator.
+
+{{tagcloud}} will render a tag cloud. Most likely use would be in an
+wiki sidebar. The tagcloud will automatically be rendered in the
+issues list sidebar.

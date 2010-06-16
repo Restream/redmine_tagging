@@ -1,0 +1,19 @@
+<%= l(:tagging_selected_tags)%>: <% @tags.each do |tag| %> <%= tag %> <% end %><br/>
+<% if @issues.size > 0 %>
+  <h3><%= l(:label_issue_plural) %></h3>
+  <% @issues.each do |issue| %>
+    <%= link_to(issue.subject, {:controller => "issues", :action => "show", :project_id => @project.identifier, :id => issue}) %>:
+      <% issue.tag_list_on(@project.identifier).sort.each do |tag| %>
+        <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}) %>
+      <% end %><br/>
+  <% end %>
+<% end %>
+<% if @wikipages.size > 0 %>
+  <h3><%= l(:label_wiki_page_plural) %></h3>
+  <% @wikipages.each do |page| %>
+    <%= link_to(page.title, {:controller => "wiki", :action => "index", :id => @project.identifier, :page => page.title}) %>:
+      <% page.tag_list_on(@project.identifier).sort.each do |tag| %>
+        <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}) %>
+      <% end %><br/>
+  <% end %>
+<% end %>
