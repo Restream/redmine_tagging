@@ -18,7 +18,7 @@
     }
 %>
 <% if tags.size > 0 %>
-  <h3><%= l(:tagging_tags)</h3>
+  <h3><%= l(:tagging_tags) %></h3>
   <div id='tagcloud'>
     <% tags.each_pair do |tag, count| %>
       <%= link_to("##{tag}",
