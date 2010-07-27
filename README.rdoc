@@ -5,7 +5,7 @@ can use
 
 {{tag(some tags, here or-there)}}
 
-which will tag your object with #some #tags #here. Tags can only
+which will tag your object with #some #tags #here #or-there. Tags can only
 consist of letters, numbers or a dash, run together. spaces _or_
 commas will act as a separator.
 
