@@ -12,3 +12,6 @@ commas will act as a separator.
 {{tagcloud}} will render a tag cloud. Most likely use would be in an
 wiki sidebar. The tagcloud will automatically be rendered in the
 issues list sidebar.
+
+This plugin needs acts-as-taggable-on
+(http://github.com/mbleigh/acts-as-taggable-on) to be installed.
