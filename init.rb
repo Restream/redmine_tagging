@@ -2,7 +2,7 @@ require 'redmine'
 
 require 'tagging_patches'
 
-Dispatcher.to_prepare do
+ActionController::Dispatcher.to_prepare do
     require_dependency 'issue'
     require_dependency 'wiki_page'
 
