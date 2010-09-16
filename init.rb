@@ -61,7 +61,9 @@ Redmine::Plugin.register :redmine_tagging do
         project = obj.project
       end
 
-      @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
+      if !project.nil? # this may be an attempt to render tag cloud when deleting wiki page
+        @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
+      end
     end
   end 
 
