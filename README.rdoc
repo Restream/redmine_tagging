@@ -14,7 +14,10 @@ wiki sidebar. The tagcloud will automatically be rendered in the
 issues list sidebar.
 
 This plugin needs acts-as-taggable-on
-(http://github.com/mbleigh/acts-as-taggable-on) to be installed.
+(http://github.com/rymai/acts-as-taggable-on) to be installed. The
+original plugin from http://github.com/mbleigh/acts-as-taggable-on
+needs patches to make it compatible with rails 2.3.5, which Redmine
+uses.
 
 = Installation
 
