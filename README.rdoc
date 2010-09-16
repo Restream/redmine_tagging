@@ -1,4 +1,4 @@
-= tagging
+= Tagging
 
 Simple tagging using wiki macros. In your issue or wikipage body you
 can use
@@ -15,3 +15,16 @@ issues list sidebar.
 
 This plugin needs acts-as-taggable-on
 (http://github.com/mbleigh/acts-as-taggable-on) to be installed.
+
+= Installation
+
+You need to set up database for acts-as-taggable-on. Shortly, do:
+
+1a) for Rails 2 (which Redmine currently uses):
+  $ script/generate acts_as_taggable_on_migration
+1b) for Rails 3:
+  $ rails generation acts_as_taggable_on:migration
+2)
+  $ rails db:migrate
+
+See the README of acts-as-taggable-on for details.
