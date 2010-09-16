@@ -1,3 +1,4 @@
+<%- context = @project.identifier.gsub '-', '_' -%>
 <%- content_for :header_tags do %>
   <%= stylesheet_link_tag 'tagging', :plugin => 'redmine_tagging' %>
 <% end %>
@@ -17,7 +18,7 @@
           <%= link_to(issue.subject, {:controller => "issues", :action => "show", :project_id => @project.identifier, :id => issue}, {:class => (issue.closed? ? "closed" : "")}) %>
         </td>
         <td class="tags">
-          <% issue.tag_list_on(@project.identifier).sort.each do |tag| %>
+          <% issue.tag_list_on(context).sort.each do |tag| %>
             <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}, {:class => 'tag'}) %>
           <% end %>
         </td>
@@ -36,7 +37,7 @@
           <%= link_to(page.title, {:controller => "wiki", :action => "index", :id => @project.identifier, :page => page.title}) %>
         </td>
         <td class="tags">
-          <% page.tag_list_on(@project.identifier).sort.each do |tag| %>
+          <% page.tag_list_on(context).sort.each do |tag| %>
             <%= link_to("##{tag}", {:controller => "tagging", :action => "index", :project_id => @project.identifier, :tags => tag}, {:class => 'tag'}) %>
           <% end %>
         </td>

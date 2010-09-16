@@ -35,10 +35,10 @@ Redmine::Plugin.register :redmine_tagging do
       else
         project = obj.project
       end
-      context = project.identifier
+      context = project.identifier.gsub('-', '_')
 
       # only save if there are differences
-      if obj.tag_list_on(project.identifier).sort.join(',') != tags.join(',')
+      if obj.tag_list_on(context).sort.join(',') != tags.join(',')
         obj.set_tag_list_on(context, tags.join(', '))
         obj.save
       end

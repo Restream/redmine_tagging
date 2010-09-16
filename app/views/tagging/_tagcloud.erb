@@ -9,11 +9,12 @@
   });
 </script>
 <%
+    context = project.identifier.gsub '-', '_'
     tags = {}
-    Issue.tag_counts_on(project.identifier).each {|tag|
+    Issue.tag_counts_on(context).each {|tag|
       tags[tag.name] = tag.count
     }
-    WikiPage.tag_counts_on(project.identifier).each {|tag|
+    WikiPage.tag_counts_on(context).each {|tag|
       tags[tag.name] = tags[tag.name].to_i + tag.count
     }
 %>
