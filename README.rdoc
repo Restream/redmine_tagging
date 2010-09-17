@@ -21,6 +21,11 @@ uses.
 
 = Installation
 
+While patches to acts-as-taggable-on are not merged to upstream, you should
+use a fork of it. Installation is performed with:
+
+  $ script/plugin install git://github.com/whitequark/acts-as-taggable-on.git
+
 You need to set up database for acts-as-taggable-on. Shortly, do:
 
 1a) for Rails 2 (which Redmine currently uses):
