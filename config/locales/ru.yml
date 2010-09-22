@@ -1,4 +1,4 @@
 # Russian  strings go here for Rails i18n
-en:
+ru:
   tagging_selected_tags: "Выбранные теги"
   tagging_tags: "Теги"
