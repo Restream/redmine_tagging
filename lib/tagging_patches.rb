@@ -1,39 +1,50 @@
 require_dependency 'issue'
+require_dependency 'wiki_page'
 
-module WikiPagePatch
-  def self.included(base) # :nodoc:
-    base.extend(ClassMethods)
-    base.send(:include, InstanceMethods)
-
-    base.class_eval do
-      unloadable
-
-      acts_as_taggable
+module Tagging
+  module WikiPagePatch
+    def self.included(base) # :nodoc:
+      base.extend(ClassMethods)
+      base.send(:include, InstanceMethods)
+  
+      base.class_eval do
+        unloadable
+  
+        acts_as_taggable
+  
+        has_many :wiki_page_tags
+      end
+    end
+  
+    module ClassMethods
+    end
+  
+    module InstanceMethods
     end
   end
-
-  module ClassMethods
-  end
-
-  module InstanceMethods
+  
+  module IssuePatch
+    def self.included(base) # :nodoc:
+      base.extend(ClassMethods)
+      base.send(:include, InstanceMethods)
+  
+      base.class_eval do
+        unloadable
+  
+        acts_as_taggable
+  
+        has_many :issue_tags
+      end
+    end
+  
+    module ClassMethods
+    end
+  
+    module InstanceMethods
+    end
   end
 end
 
-module IssuePatch
-  def self.included(base) # :nodoc:
-    base.extend(ClassMethods)
-    base.send(:include, InstanceMethods)
+Issue.send(:include, Tagging::IssuePatch) unless Issue.included_modules.include? Tagging::IssuePatch
 
-    base.class_eval do
-      unloadable
-
-      acts_as_taggable
-    end
-  end
-
-  module ClassMethods
-  end
-
-  module InstanceMethods
-  end
-end
+WikiPage.send(:include, Tagging::WikiPagePatch) unless WikiPage.included_modules.include? Tagging::WikiPagePatch
