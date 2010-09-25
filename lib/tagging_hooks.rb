@@ -30,7 +30,24 @@ module TaggingPlugin
 
         tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
 
-        return '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
+        tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
+        tags += javascript_include_tag 'jquery-1.4.2.min.js', :plugin => 'redmine_tagging'
+        tags += javascript_include_tag 'tag.js', :plugin => 'redmine_tagging'
+
+        ac = ActsAsTaggableOn::Tag.find(:all,
+            :conditions => ["id in (select tag_id from taggings
+            where taggable_type in ('WikiPage', 'Issue') and context = ?)", tag_context]).collect {|tag| tag.name}
+        ac = ac.collect{|tag| "'#{escape_javascript(tag.gsub(/^#/, ''))}'"}.join(', ')
+        tags += <<-generatedscript
+          <script type="text/javascript">
+            var $j = jQuery.noConflict();
+            $j(document).ready(function() {
+              $j('#issue_tags').tagSuggest({ tags: [#{ac}] });
+            });
+          </script>
+        generatedscript
+
+        return tags
       end
 
       def controller_issues_edit_after_save(context = {})
