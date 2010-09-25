@@ -13,17 +13,6 @@ class ScrubBody < ActiveRecord::Migration
       content.data = content.data.gsub(/[{]{2}tag[(][^)]*[)][}]{2}/i, '')
       content.save!
     }
-
-    contexts = Project.find(:all).collect{|p| p.identifier}
-    contexts << contexts.collect{|c| c.gsub('-', '_')}
-    contexts.flatten!
-
-    ActsAsTaggableOn::Tag.find(:all,
-      :conditions => ["not name like '#%' and id in (select tag_id from taggings where taggable_type in ('WikiPage', 'Issue') and context in (?))", contexts]
-      ).each {|tag|
-      tag.name = "##{tag.name}"
-      tag.save
-    }
   end
 
   def self.down
