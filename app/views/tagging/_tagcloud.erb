@@ -19,10 +19,10 @@
     }
 %>
 <% if tags.size > 0 %>
-  <h3><%= l(:tagging_tags) %></h3>
+  <h3><%= l(:field_tags) %></h3>
   <div id='tagcloud'>
     <% tags.each_pair do |tag, count| %>
-      <%= link_to("##{tag}",
+      <%= link_to("#{tag}",
             {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true},
             {:rel => count}) %>
     <% end %>

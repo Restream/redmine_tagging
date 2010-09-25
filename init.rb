@@ -32,38 +32,6 @@ Redmine::Plugin.register :redmine_tagging do
   description 'Wiki/issues tagging'
   version '0.0.1'
 
-  #project_module :tagging do
-    #permission :view_project, :tagging => :index
-  #end
-  Redmine::AccessControl.permission(:view_project).actions << 'tagging/index'
-
-  Redmine::WikiFormatting::Macros.register do
-    desc "Wiki/Issues tag" 
-    macro :tag do |obj, args|
-      args, options = extract_macro_options(args, :parent)
-      tags = args.collect{|a| a.split}.flatten.collect{|tag| tag.gsub(/[^-0-9a-zA-Z]/, '') }.uniq.sort
-
-      if obj.is_a? WikiContent
-        obj = obj.page
-        project = obj.wiki.project
-      else
-        project = obj.project
-      end
-      context = project.identifier.gsub('-', '_')
-
-      # only save if there are differences
-      if obj.tag_list_on(context).sort.join(',') != tags.join(',')
-        obj.set_tag_list_on(context, tags.join(', '))
-        obj.save
-      end
-
-      taglinks = tags.collect{|tag|
-        link_to("##{tag}", {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true})
-      }.join('&nbsp;')
-      "<div class='tags'>#{taglinks}</div>"
-    end
-  end 
-
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tagcloud" 
     macro :tagcloud do |obj, args|

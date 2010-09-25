@@ -1,4 +1,3 @@
 # English strings go here for Rails i18n
 nl:
-  tagging_selected_tags: "Geselecteerde tags"
-  tagging_tags: "Tags"
+  field_tags: "Tags"

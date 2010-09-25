@@ -44,3 +44,8 @@ You need to set up database for acts-as-taggable-on. Shortly, do:
   $ rails db:migrate
 
 See the README of acts-as-taggable-on for details.
+
+Next:
+* Search filter
+* jQuery autocomplete
+
