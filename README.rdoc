@@ -1,13 +1,12 @@
 = Tagging
 
-Simple tagging using wiki macros. In your issue or wikipage body you
-can use
+Simple tagging for redmine. Features:
+* Tag cloud in the sidebar
+* Tag suggestion/autocomplete
+* Redmine search integration (search for #tag to find wikis/issues)
+* Filter issues on tags
 
-{{tag(some tags, here or-there)}}
-
-which will tag your object with #some #tags #here #or-there. Tags can only
-consist of letters, numbers or a dash, run together. spaces _or_
-commas will act as a separator.
+Spaces _or_ commas will act as a separator when editing tags
 
 {{tagcloud}} will render a tag cloud. Most likely use would be in an
 wiki sidebar. The tagcloud will automatically be rendered in the
@@ -30,11 +29,10 @@ The plugin also needs rails_sql_views 0.7.0, installed by doing:
 While patches to acts-as-taggable-on are not merged to upstream, you should
 use a fork of it. Installation is performed with:
 
-  $ gem install rails_sql_views
   $ script/plugin install git://github.com/rymai/acts-as-taggable-on.git
   $ script/plugin install git://github.com/friflaj/redmine_tagging.git
 
-You need to set up database for acts-as-taggable-on. Shortly, do:
+You need to set up database for acts-as-taggable-on:
 
 1a) for Rails 2 (which Redmine currently uses):
   $ script/generate acts_as_taggable_on_migration
@@ -44,8 +42,3 @@ You need to set up database for acts-as-taggable-on. Shortly, do:
   $ rails db:migrate
 
 See the README of acts-as-taggable-on for details.
-
-Next:
-* Search filter
-* jQuery autocomplete
-

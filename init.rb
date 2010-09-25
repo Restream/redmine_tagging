@@ -3,6 +3,7 @@ require 'dispatcher'
 
 Dispatcher.to_prepare do
   require_dependency 'tagging_patches'
+  require_dependency 'tagging_query_patch'
 
   if !Issue.searchable_options[:include].include? :issue_tags
     Issue.searchable_options[:columns] << "#{IssueTag.table_name}.tag"
