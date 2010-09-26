@@ -39,6 +39,6 @@ You need to set up database for acts-as-taggable-on:
 1b) for Rails 3:
   $ rails generation acts_as_taggable_on:migration
 2)
-  $ rails db:migrate
+  $ rake db:migrate
 
 See the README of acts-as-taggable-on for details.
