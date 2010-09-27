@@ -1,3 +1,4 @@
 # English strings go here for Rails i18n
 en:
   field_tags: "Tags"
+  tagging_inline: "Inline editing of tags"

@@ -1,7 +1,7 @@
 require_dependency 'issue'
 require_dependency 'wiki_page'
 
-module Tagging
+module TaggingPlugin
   module WikiPagePatch
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
@@ -87,8 +87,8 @@ module Tagging
   end
 end
 
-Issue.send(:include, Tagging::IssuePatch) unless Issue.included_modules.include? Tagging::IssuePatch
+Issue.send(:include, TaggingPlugin::IssuePatch) unless Issue.included_modules.include? TaggingPlugin::IssuePatch
 
-WikiPage.send(:include, Tagging::WikiPagePatch) unless WikiPage.included_modules.include? Tagging::WikiPagePatch
+WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
 
-WikiController.send(:include, Tagging::WikiControllerPatch) unless WikiController.included_modules.include? Tagging::WikiControllerPatch
+WikiController.send(:include, TaggingPlugin::WikiControllerPatch) unless WikiController.included_modules.include? TaggingPlugin::WikiControllerPatch

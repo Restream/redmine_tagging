@@ -9,6 +9,8 @@ module TaggingPlugin
       end
 
       def view_issues_show_details_bottom(context={ })
+        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
+
         issue = context[:issue]
         snippet = ''
 
@@ -24,6 +26,8 @@ module TaggingPlugin
       end
 
       def view_issues_form_details_bottom(context={ })
+        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
+
         issue = context[:issue]
 
         tag_context = issue.project.identifier.gsub('-', '_')
@@ -51,12 +55,14 @@ module TaggingPlugin
       end
 
       def controller_issues_edit_after_save(context = {})
+        return if Setting.plugin_redmine_tagging[:inline] == "1"
+
         return unless context[:params] && context[:params]['issue']
 
         issue = context[:issue]
         tags = context[:params]['issue']['tags'].to_s
 
-        tags = tags.split(/[\s,]+/).collect{|tag| "##{tag}"}.join(', ')
+        tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
         tag_context = issue.project.identifier.gsub('-', '_')
 
         issue.set_tag_list_on(tag_context, tags)
@@ -65,6 +71,8 @@ module TaggingPlugin
 
       # wikis have no view hooks
       def view_layouts_base_content(context = {})
+        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
+
         return '' unless context[:controller].is_a? WikiController
 
         request = context[:request]
@@ -114,11 +122,13 @@ module TaggingPlugin
       end
 
       def controller_wiki_edit_after_save(context = {})
+        return if Setting.plugin_redmine_tagging[:inline] == "1"
+
         return unless context[:params]
 
         project = context[:page].wiki.project
 
-        tags = context[:params]['wikipage_tags'].to_s.split(/[\s,]+/).collect{|tag| "##{tag}"}.join(', ')
+        tags = context[:params]['wikipage_tags'].to_s.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
         tag_context = project.identifier.gsub('-', '_')
 
         context[:page].set_tag_list_on(tag_context, tags)
@@ -126,6 +136,8 @@ module TaggingPlugin
       end
 
       def view_layouts_base_html_head(context = {})
+        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
+
         return "
           <style>
             span.tagMatches {

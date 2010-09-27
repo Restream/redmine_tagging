@@ -1,6 +1,6 @@
 require_dependency 'query'
 
-module Tagging
+module TaggingPlugin
   module QueryPatch
   def self.included(base) # :nodoc:
     base.extend(ClassMethods)
@@ -70,4 +70,4 @@ module Tagging
   end
 end
 
-Query.send(:include, Tagging::QueryPatch) unless Query.included_modules.include? Tagging::QueryPatch
+Query.send(:include, TaggingPlugin::QueryPatch) unless Query.included_modules.include? TaggingPlugin::QueryPatch

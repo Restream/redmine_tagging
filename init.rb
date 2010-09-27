@@ -33,6 +33,8 @@ Redmine::Plugin.register :redmine_tagging do
   description 'Wiki/issues tagging'
   version '0.0.1'
 
+  settings :default => { :inline  => "0" }, :partial => 'tagging/settings'
+
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tagcloud" 
     macro :tagcloud do |obj, args|
@@ -50,4 +52,34 @@ Redmine::Plugin.register :redmine_tagging do
     end
   end 
 
+  Redmine::WikiFormatting::Macros.register do
+    desc "Wiki/Issues tag"
+    macro :tag do |obj, args|
+      if Setting.plugin_redmine_tagging[:inline] == "1"
+        args, options = extract_macro_options(args, :parent)
+        tags = args.collect{|a| a.split(/[#"'\s,]+/)}.flatten.select{|tag| !tag.blank?}.collect{|tag| "##{tag}" }.uniq.sort
+
+        if obj.is_a? WikiContent
+          obj = obj.page
+          project = obj.wiki.project
+        else
+          project = obj.project
+        end
+        context = project.identifier.gsub('-', '_')
+
+        # only save if there are differences
+        if obj.tag_list_on(context).sort.join(',') != tags.join(',')
+          obj.set_tag_list_on(context, tags.join(', '))
+          obj.save
+        end
+
+        taglinks = tags.collect{|tag|
+          link_to("#{tag}", {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true})
+        }.join('&nbsp;')
+        "<div class='tags'>#{taglinks}</div>"
+      else
+        ''
+      end
+    end
+  end
 end

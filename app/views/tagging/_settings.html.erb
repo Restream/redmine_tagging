@@ -1,0 +1,4 @@
+    <p>
+        <%= content_tag(:label, l(:tagging_inline)) %>
+        <%= check_box_tag("settings[inline]", "1", Setting.plugin_redmine_tagging[:inline] == "1") %>
+    </p>

@@ -43,3 +43,14 @@ You need to set up database for acts-as-taggable-on:
   $ rake db:migrate_plugins
 
 See the README of acts-as-taggable-on for details.
+
+I've added a switch so you can choose between in-line tag editing with
+{{tag(some tags here-or-there)}} or editing the tags in a separate
+edit field. After you've changed the setting in Administration ->
+Plugins -> Configure -> Tagging, run
+
+  $ rake redmine:tagging:reconfigure
+
+to put tags in the body or remove them, depending on what you
+configured for your installation. Not doing so will cause data (tag)
+loss when moving from non-inline to inline.
