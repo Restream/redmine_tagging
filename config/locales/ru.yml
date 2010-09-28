@@ -1,3 +1,5 @@
 # Russian  strings go here for Rails i18n
 ru:
   field_tags: "Теги"
+  tagging_wiki_pages_inline: "Использовать теги из текста страниц вики"
+  tagging_issues_inline: "Использовать теги из описаний задач"
