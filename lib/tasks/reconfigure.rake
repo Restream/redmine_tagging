@@ -3,8 +3,8 @@ namespace :redmine do
     desc "Reconfigure for inline/separate tag editing"
     task :reconfigure => :environment do
 
-      if Setting.plugin_redmine_tagging[:inline] == "1"
-        puts "Adding inline tags"
+      if Setting.plugin_redmine_tagging[:issues_inline] == "1"
+        puts "Adding inline tags to issues"
 
         Issue.find(:all).each {|issue|
           tag_context = issue.project.identifier.gsub('-', '_')
@@ -20,7 +20,19 @@ namespace :redmine do
   
           issue.save!
         }
+      else
+        puts "Removing inline tags from issues"
+        Issue.find(:all, :conditions => "lower(description) like '%{{tag(%'").each {|issue|
+          next if issue.description.blank?
+
+          issue.description = issue.description.gsub(/[{]{2}tag[(][^)]*[)][}]{2}/i, '')
+          issue.save!
+        }
+      end
   
+      if Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
+        puts "Adding inline tags to wikis"
+
         WikiContent.find(:all).each {|content|
           tag_context = content.page.wiki.project.identifier.gsub('-', '_')
           tags = content.page.tag_list_on(tag_context).collect {|tag| tag.gsub(/^#/, '') }.sort.join(', ')
@@ -36,13 +48,7 @@ namespace :redmine do
           content.save!
         }
       else
-        puts "Removing inline tags"
-        Issue.find(:all, :conditions => "lower(description) like '%{{tag(%'").each {|issue|
-          next if issue.description.blank?
-
-          issue.description = issue.description.gsub(/[{]{2}tag[(][^)]*[)][}]{2}/i, '')
-          issue.save!
-        }
+        puts "Removing inline tags from wikis"
   
         WikiContent.find(:all, :conditions => "lower(text) like '%{{tag(%'").each {|content|
           next if content.text.blank?

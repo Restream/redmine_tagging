@@ -9,7 +9,7 @@ module TaggingPlugin
       end
 
       def view_issues_show_details_bottom(context={ })
-        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
+        return '' if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
         issue = context[:issue]
         snippet = ''
@@ -26,7 +26,7 @@ module TaggingPlugin
       end
 
       def view_issues_form_details_bottom(context={ })
-        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
+        return '' if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
         issue = context[:issue]
 
@@ -55,7 +55,7 @@ module TaggingPlugin
       end
 
       def controller_issues_edit_after_save(context = {})
-        return if Setting.plugin_redmine_tagging[:inline] == "1"
+        return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
         return unless context[:params] && context[:params]['issue']
 
@@ -71,7 +71,7 @@ module TaggingPlugin
 
       # wikis have no view hooks
       def view_layouts_base_content(context = {})
-        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
+        return '' if Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
 
         return '' unless context[:controller].is_a? WikiController
 
@@ -122,7 +122,7 @@ module TaggingPlugin
       end
 
       def controller_wiki_edit_after_save(context = {})
-        return if Setting.plugin_redmine_tagging[:inline] == "1"
+        return if Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
 
         return unless context[:params]
 
@@ -136,8 +136,6 @@ module TaggingPlugin
       end
 
       def view_layouts_base_html_head(context = {})
-        return '' if Setting.plugin_redmine_tagging[:inline] == "1"
-
         return "
           <style>
             span.tagMatches {

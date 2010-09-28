@@ -1,4 +1,5 @@
 # English strings go here for Rails i18n
 nl:
   field_tags: "Tags"
-  tagging_inline: "Tags bewerking in text"
+  tagging_wiki_pages_inline: "Tag bewerking in text van wiki paginas"
+  tagging_issues_inline: "Tag bewerking in text van issues"

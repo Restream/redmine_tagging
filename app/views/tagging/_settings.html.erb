@@ -1,4 +1,8 @@
     <p>
-        <%= content_tag(:label, l(:tagging_inline)) %>
-        <%= check_box_tag("settings[inline]", "1", Setting.plugin_redmine_tagging[:inline] == "1") %>
+        <%= content_tag(:label, l(:tagging_wiki_pages_inline)) %>
+        <%= check_box_tag("settings[wiki_pages_inline]", "1", Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1") %>
+    </p>
+    <p>
+        <%= content_tag(:label, l(:tagging_issues_inline)) %>
+        <%= check_box_tag("settings[issues_inline]", "1", Setting.plugin_redmine_tagging[:issues_inline] == "1") %>
     </p>

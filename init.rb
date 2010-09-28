@@ -33,7 +33,7 @@ Redmine::Plugin.register :redmine_tagging do
   description 'Wiki/issues tagging'
   version '0.0.1'
 
-  settings :default => { :inline  => "0" }, :partial => 'tagging/settings'
+  settings :default => { :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
 
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tagcloud" 
@@ -55,7 +55,15 @@ Redmine::Plugin.register :redmine_tagging do
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tag"
     macro :tag do |obj, args|
-      if Setting.plugin_redmine_tagging[:inline] == "1"
+      if obj.is_a?(WikiContent) && Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
+        inline = True
+      elsif obj.is_a?(Issue) && Setting.plugin_redmine_tagging[:issues_inline] == "1"
+        inline = True
+      else
+        inline = False
+      end
+
+      if inline
         args, options = extract_macro_options(args, :parent)
         tags = args.collect{|a| a.split(/[#"'\s,]+/)}.flatten.select{|tag| !tag.blank?}.collect{|tag| "##{tag}" }.uniq.sort
 
