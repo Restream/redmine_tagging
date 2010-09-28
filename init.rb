@@ -56,11 +56,11 @@ Redmine::Plugin.register :redmine_tagging do
     desc "Wiki/Issues tag"
     macro :tag do |obj, args|
       if obj.is_a?(WikiContent) && Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
-        inline = True
+        inline = true
       elsif obj.is_a?(Issue) && Setting.plugin_redmine_tagging[:issues_inline] == "1"
-        inline = True
+        inline = true
       else
-        inline = False
+        inline = false
       end
 
       if inline
