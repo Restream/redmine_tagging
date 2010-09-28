@@ -20,7 +20,7 @@ module TaggingPlugin
           link_to("#{tag}", {:controller => "search", :action => "index", :id => issue.project, :q => tag, :wiki_pages => true, :issues => true})
         }.join('&nbsp;')
 
-        tags = "<tr><th>#{l(:field_tags)}</th><td>#{tags}</td></tr>" if tags
+        tags = "<tr><th>#{l(:field_tags)}:</th><td>#{tags}</td></tr>" if tags
 
         return tags
       end
@@ -92,7 +92,7 @@ module TaggingPlugin
             link_to("#{tag}", {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true})
           }.join('&nbsp;')
 
-          tags = "<h3>#{l(:field_tags)}</h3><p>#{tags}</p>" if tags
+          tags = "<h3>#{l(:field_tags)}:</h3><p>#{tags}</p>" if tags
         end
 
         if request.parameters['action'] == 'edit'
