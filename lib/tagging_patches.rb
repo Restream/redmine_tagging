@@ -63,20 +63,22 @@ module TaggingPlugin
       def edit_with_save_tags
         if ! request.get?
           page = @wiki.find_page(params[:page])
-          content = page.content_for_version(params[:version])
-          txt = content.text.to_s
+          if page
+            content = page.content_for_version(params[:version])
+            txt = content.text.to_s
 
-          # if the body text wasn't change the after_save hook doesn't
-          # get called. This either forces a new space at the end, or
-          # removes it if it was already present. This fully undoes the
-          # performance gain that was intended by not saving the object
-          # because it will always perform 2 requests _and_ save the
-          # object, but whatyagonnado...
-          if params[:content][:text] == txt
-            if txt =~ / $/
-              params[:content][:text].rstrip!
-            else
-              params[:content][:text] += ' '
+            # if the body text wasn't change the after_save hook doesn't
+            # get called. This either forces a new space at the end, or
+            # removes it if it was already present. This fully undoes the
+            # performance gain that was intended by not saving the object
+            # because it will always perform 2 requests _and_ save the
+            # object, but whatyagonnado...
+            if params[:content][:text] == txt
+              if txt =~ / $/
+                params[:content][:text].rstrip!
+              else
+                params[:content][:text] += ' '
+              end
             end
           end
         end
