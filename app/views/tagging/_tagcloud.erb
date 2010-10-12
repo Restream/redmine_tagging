@@ -3,9 +3,11 @@
 <script type='text/javascript'>
   $j = jQuery.noConflict();
   $j(document).ready(function() {
-    $j('#tagcloud a').tagcloud({
-      size: {start: 10, end:18, unit: "pt"}
-    });
+    <% if Setting.plugin_redmine_tagging[:dynamic_font_size] == "1" %>
+      $j('#tagcloud a').tagcloud({
+        size: {start: 10, end:18, unit: "pt"}
+      });
+    <% end %>
   });
 </script>
 <%
@@ -22,7 +24,6 @@
   <h3><%= l(:field_tags) %></h3>
   <div id='tagcloud'>
     <% tags.each_pair do |tag, count| %>
-      <% count = 1 if Setting.plugin_redmine_tagging[:dynamic_font_size] != "1" %>
       <%= link_to("#{tag.gsub(/^#/, '')}",
             {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true},
             {:rel => count}) %>
