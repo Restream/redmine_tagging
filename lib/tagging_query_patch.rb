@@ -30,7 +30,7 @@ module TaggingPlugin
 
       tag_filter = {
         "tags" => {
-          :type => :list,
+          :type => :list_optional,
           :values => tags,
           :order => 20
         } 
