@@ -3,3 +3,5 @@ en:
   field_tags: "Tags"
   tagging_wiki_pages_inline: "Inline editing of tags for wiki pages"
   tagging_issues_inline: "Inline editing of tags for issues"
+  tagging_sidebar_tagcloud: "Show tagcloud in issues sidebar"
+  tagging_dynamic_font_size: "Font size in tag cloud based on tag use"

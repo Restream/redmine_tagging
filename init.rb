@@ -33,7 +33,7 @@ Redmine::Plugin.register :redmine_tagging do
   description 'Wiki/issues tagging'
   version '0.0.1'
 
-  settings :default => { :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
+  settings :default => { :dynamic_font_size => "1", :sidebar_tagcloud => "1", :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
 
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tagcloud" 

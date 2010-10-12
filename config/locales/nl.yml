@@ -3,3 +3,5 @@ nl:
   field_tags: "Tags"
   tagging_wiki_pages_inline: "Tag bewerking in text van wiki paginas"
   tagging_issues_inline: "Tag bewerking in text van issues"
+  tagging_sidebar_tagcloud: "Show tagcloud in issues sidebar"
+  tagging_dynamic_font_size: "Font size in tag cloud based on tag use"

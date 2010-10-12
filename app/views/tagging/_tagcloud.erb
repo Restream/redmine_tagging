@@ -22,6 +22,7 @@
   <h3><%= l(:field_tags) %></h3>
   <div id='tagcloud'>
     <% tags.each_pair do |tag, count| %>
+      <% count = 1 if Setting.plugin_redmine_tagging[:dynamic_font_size] != "1" %>
       <%= link_to("#{tag.gsub(/^#/, '')}",
             {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true},
             {:rel => count}) %>
