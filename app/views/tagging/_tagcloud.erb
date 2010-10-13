@@ -1,16 +1,4 @@
 <% if project %>
-  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js' type='text/javascript'></script>
-  <%= javascript_include_tag('jquery.tagcloud.js', :plugin => 'redmine_tagging') %>
-  <script type='text/javascript'>
-    $j = jQuery.noConflict();
-    $j(document).ready(function() {
-      <% if Setting.plugin_redmine_tagging[:dynamic_font_size] == "1" %>
-        $j('#tagcloud a').tagcloud({
-          size: {start: 10, end:18, unit: "pt"}
-        });
-      <% end %>
-    });
-  </script>
   <%
       context = project.identifier.gsub '-', '_'
       tags = {}
@@ -20,14 +8,27 @@
       WikiPage.tag_counts_on(context).each {|tag|
         tags[tag.name] = tags[tag.name].to_i + tag.count
       }
+
+      tags = tags.reject {|key,value| value == 0 }
+      min = tags.values.min
+      factor = 10 / ((tags.values.max - min) + 1)
   %>
   <% if tags.size > 0 %>
     <h3><%= l(:field_tags) %></h3>
     <div id='tagcloud'>
-      <% tags.each_pair do |tag, count| %>
+      <% tags.keys.sort.each do |tag| %>
+        <%
+          count = tags[tag]
+          if Setting.plugin_redmine_tagging[:dynamic_font_size] == "1"
+            size = 8 + ((count - min) * factor)
+            style = {:style => "font-size: #{size}pt" }
+          else
+            style = {}
+          end
+        %>
         <%= link_to("#{tag.gsub(/^#/, '')}",
               {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true},
-              {:rel => count}) %>
+              style) %>
       <% end %>
     </div>
   <% end %>
