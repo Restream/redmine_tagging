@@ -10,10 +10,11 @@
       }
 
       tags = tags.reject {|key,value| value == 0 }
-      min = tags.values.min
-      factor = 10 / ((tags.values.max - min) + 1)
   %>
-  <% if tags.size > 0 %>
+  <% if tags.size > 0
+      min = tags.values.min
+      factor = 10.0 / ((tags.values.max - min) + 1)
+  %>
     <h3><%= l(:field_tags) %></h3>
     <div id='tagcloud'>
       <% tags.keys.sort.each do |tag| %>
