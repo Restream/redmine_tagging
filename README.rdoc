@@ -54,3 +54,11 @@ Plugins -> Configure -> Tagging, run
 to put tags in the body or remove them, depending on what you
 configured for your installation. Not doing so will cause data (tag)
 loss when moving from non-inline to inline.
+
+= Inline tagging
+
+Inline tagging using {{tag(bla bla)}} saves your tags when the body is
+rendered. A nasty side-effect of this is that if you want to remove
+_all_ tags from an object, you must add {{tag}} to the body to
+actually clear the tags. After it's been rendered once, you can remove
+it from the body.
