@@ -71,6 +71,8 @@ module TaggingPlugin
         issue.save
       end
 
+      alias_method :controller_issues_new_after_save, :controller_issues_edit_after_save
+
       # wikis have no view hooks
       def view_layouts_base_content(context = {})
         return '' if Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
@@ -143,7 +145,7 @@ module TaggingPlugin
             span.tagMatches {
               margin-left: 10px;
             }
-      
+
             span.tagMatches span {
               padding: 2px;
               margin-right: 4px;
