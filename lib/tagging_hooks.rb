@@ -3,7 +3,6 @@
 module TaggingPlugin
   module Hooks
     class LayoutHook < Redmine::Hook::ViewListener
-      require 'action_view/helpers/capture_helper'
 
       def view_issues_sidebar_planning_bottom(context={ })
         return '' if Setting.plugin_redmine_tagging[:sidebar_tagcloud] != "1"
@@ -20,15 +19,6 @@ module TaggingPlugin
         issue = context[:issue]
         snippet = ''
         tag_context = issue.project.identifier.gsub('-', '_')
-
-        # tags = issue.tag_list_on(tag_context).sort.map {|tag|
-        #   link_to("#{tag}", {:controller => "search", :action => "index", :id => issue.project, :q => tag, :wiki_pages => true, :issues => true})
-        # }.join('&nbsp;')
-        #
-        # tags = "<tr><th>#{l(:field_tags)}:</th><td>#{tags}</td></tr>" if tags
-        #
-        # return tags
-
         tags = issue.tag_list_on(tag_context).sort
 
         return context[:controller].send(:render_to_string, {

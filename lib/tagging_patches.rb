@@ -2,44 +2,63 @@ require_dependency 'issue'
 require_dependency 'wiki_page'
 
 module TaggingPlugin
+
+  module ProjectsHelperPatch
+    def self.included(base) # :nodoc:
+      base.send(:include, InstanceMethods)
+
+      base.class_eval do
+        alias_method_chain :project_settings_tabs, :tags_tab
+      end
+    end
+
+    module InstanceMethods
+      def project_settings_tabs_with_tags_tab
+        tabs = project_settings_tabs_without_tags_tab
+        tabs << { :name => 'tags', :partial => 'tagging/tagtab', :label => :tagging_tab_label}
+        return tabs
+      end
+    end
+  end
+
   module WikiPagePatch
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
       base.send(:include, InstanceMethods)
-  
+
       base.class_eval do
         unloadable
-  
+
         acts_as_taggable
-  
+
         has_many :wiki_page_tags
       end
     end
-  
+
     module ClassMethods
     end
-  
+
     module InstanceMethods
     end
   end
-  
+
   module IssuePatch
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
       base.send(:include, InstanceMethods)
-  
+
       base.class_eval do
         unloadable
-  
+
         acts_as_taggable
-  
+
         has_many :issue_tags
       end
     end
-  
+
     module ClassMethods
     end
-  
+
     module InstanceMethods
     end
   end
@@ -48,17 +67,17 @@ module TaggingPlugin
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
       base.send(:include, InstanceMethods)
-  
+
       base.class_eval do
         unloadable
-  
+
         alias_method_chain :edit, :save_tags
       end
     end
-  
+
     module ClassMethods
     end
-  
+
     module InstanceMethods
       def edit_with_save_tags
         if ! request.get?
@@ -94,3 +113,5 @@ Issue.send(:include, TaggingPlugin::IssuePatch) unless Issue.included_modules.in
 WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
 
 WikiController.send(:include, TaggingPlugin::WikiControllerPatch) unless WikiController.included_modules.include? TaggingPlugin::WikiControllerPatch
+
+ProjectsHelper.send(:include, TaggingPlugin::ProjectsHelperPatch) unless ProjectsHelper.included_modules.include? TaggingPlugin::ProjectsHelperPatch

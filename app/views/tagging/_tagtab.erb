@@ -1,0 +1,25 @@
+tags tags tags
+
+<% if IssueTag.all.any? %>
+<table class="list">
+  <thead><tr>
+  <th><%= l(:label_tagname) %></th>
+  <th></th>
+  </tr></thead>
+  <tbody>
+<% for issue_tag in IssueTag.all %>
+  <tr class="<%= cycle 'odd', 'even' %>">
+    <td><%=h(issue_tag.tagname) %></td>
+    <td class="buttons">
+      <%= link_to l(:button_edit), { :controller => 'tags', :action => 'edit', :id => issue_tag.id }, :class => 'icon icon-edit' %>
+      <%= link_to l(:button_delete), {:controller => 'tags', :action => 'destroy', :id => issue_tag.id }, :method => :post, :class => 'icon icon-del' %>
+    </td>
+  </tr>
+<% end %>
+    </tbody>
+</table>
+<% else %>
+<p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>
+
+<p><%= link_to_if_authorized l(:label_issue_category_new), :controller => 'issue_categories', :action => 'new', :project_id => @project %></p>
