@@ -56,6 +56,26 @@ module TaggingPlugin
         return tags
       end
 
+      def controller_issues_bulk_edit_before_save(context = {})
+        return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
+
+        return unless context[:params] && context[:params]['issue']
+
+        issue = context[:issue]
+        tags = context[:params]['issue']['tags'].to_s
+        tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
+        tag_context = issue.project.identifier.gsub('-', '_')
+
+        if context[:params]['append_tags']
+          oldtags = issue.tags_on(tag_context)
+          unless oldtags.empty?
+            tags += ', ' + oldtags.map(&:name).join(', ')
+          end
+        end
+        issue.set_tag_list_on(tag_context, tags)
+
+      end
+
       def controller_issues_edit_after_save(context = {})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
@@ -154,6 +174,15 @@ module TaggingPlugin
               cursor: pointer;
             }
           </style>"
+      end
+
+      def view_issues_bulk_edit_details_bottom(context = {})
+        field = "<p>
+            <label>#{ l(:field_tags) }</label>
+            #{ text_field_tag 'issue[tags]', '', :size => 18 }<br>
+            <input type=\"checkbox\" name=\"append_tags\">#{ l(:append_tags) }<br>
+          </p>"
+        return field
       end
 
     end
