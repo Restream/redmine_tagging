@@ -36,7 +36,7 @@ Redmine::Plugin.register :redmine_tagging do
   settings :default => { :dynamic_font_size => "1", :sidebar_tagcloud => "1", :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
 
   Redmine::WikiFormatting::Macros.register do
-    desc "Wiki/Issues tagcloud" 
+    desc "Wiki/Issues tagcloud"
     macro :tagcloud do |obj, args|
       args, options = extract_macro_options(args, :parent)
 
@@ -50,7 +50,7 @@ Redmine::Plugin.register :redmine_tagging do
         @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
       end
     end
-  end 
+  end
 
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tag"

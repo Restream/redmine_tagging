@@ -3,23 +3,24 @@ require_dependency 'query'
 module TaggingPlugin
   module QueryPatch
   def self.included(base) # :nodoc:
-    base.extend(ClassMethods)
     base.send(:include, InstanceMethods)
-  
-    # Same as typing in the class 
+
+    # Same as typing in the class
     base.class_eval do
       unloadable # Send unloadable so it will not be unloaded in development
 
       alias_method_chain :available_filters, :tags
       alias_method_chain :sql_for_field, :tags
+
+      add_available_column(QueryColumn.new(:issue_tags, :caption => :tags))
     end
-  
+
   end
-  
+
   module InstanceMethods
     def available_filters_with_tags
       @available_filters = available_filters_without_tags
-  
+
       if project.nil?
         tags = ActsAsTaggableOn::Tag.find(:all, :conditions => "id in (select tag_id from taggings where taggable_type = 'Issue')")
       else
@@ -33,12 +34,12 @@ module TaggingPlugin
           :type => :list_optional,
           :values => tags,
           :order => 20
-        } 
+        }
       }
-  
+
       return @available_filters.merge(tag_filter)
     end
-  
+
     def sql_for_field_with_tags(field, operator, v, db_table, db_field, is_custom_filter=false)
       if field == "tags"
         selected_values = values_for(field)
@@ -48,26 +49,48 @@ module TaggingPlugin
         sql = "(not #{sql})" if operator == '!'
 
         return sql
-    
+
       else
         return sql_for_field_without_tags(field, operator, v, db_table, db_field, is_custom_filter)
       end
-    
+
     end
   end
-  
-  module ClassMethods
-    # Setter for +available_columns+ that isn't provided by the core.
-    def available_columns=(v)
-      self.available_columns = (v)
+
+  end
+
+  module QueriesHelperPatch
+    def self.included(base) # :nodoc:
+      base.extend(ClassMethods)
+      base.send(:include,InstanceMethods)
+      base.class_eval do
+        unloadable # Send unloadable so it will not be unloaded in development
+        alias_method_chain :column_content, :tags
+        include TaggingHelper
+      end
     end
-  
-    # Method to add a column to the +available_columns+ that isn't provided by the core.
-    def add_available_column(column)
-      self.available_columns << (column)
+
+    module ClassMethods
+    end
+
+    module InstanceMethods
+      def column_content_with_tags(column, issue)
+        value = column.value(issue)
+
+        if value.class.name == "Array"
+          if value.first.class.name == "IssueTag"
+            value.map do |issue_tag|
+              render :partial => "tagging/taglink", :locals => {:tag => issue_tag.tag, :project => @project}
+            end.join(', ')
+          end
+        else
+          column_content_without_tags(column, issue)
+        end
+      end
     end
   end
-  end
+
 end
 
 Query.send(:include, TaggingPlugin::QueryPatch) unless Query.included_modules.include? TaggingPlugin::QueryPatch
+QueriesHelper.send(:include, TaggingPlugin::QueriesHelperPatch) unless QueriesHelper.included_modules.include? TaggingPlugin::QueriesHelperPatch
