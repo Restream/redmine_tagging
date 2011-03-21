@@ -5,8 +5,13 @@ class IssueTag < ActiveRecord::Base
     return true
   end
 
-  def tagname
+  def title
     return tag.gsub(/^#/, '')
+  end
+
+  def project
+    # self.issue.project
+    Issue.find(issue_id).project
   end
 
   # Prevent objects from being destroyed

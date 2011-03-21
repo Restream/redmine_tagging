@@ -7,3 +7,4 @@ en:
   tagging_dynamic_font_size: "Font size in tag cloud based on tag use"
   tagging_tab_label: "Tags"
   label_tagname: "Tag name"
+  field_tag: "Tag title"
