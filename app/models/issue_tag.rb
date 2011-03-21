@@ -6,7 +6,7 @@ class IssueTag < ActiveRecord::Base
   end
 
   def title
-    return tag.gsub(/^#/, '')
+    tag.gsub(/^#/, '')
   end
 
   def project

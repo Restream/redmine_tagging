@@ -19,8 +19,6 @@ class IssueTagsController < ApplicationController
 
   def destroy
     ActsAsTaggableOn::Tagging.find(params[:id]).tag.taggings.destroy_all
-    # redirect_to :action => "edit", :id => params[:id]
-    # redirect_to :back
     flash[:notice] = l(:notice_successful_delete)
     redirect_to :controller => 'projects', :action => 'settings', :tab => 'tags', :id => @project
   end

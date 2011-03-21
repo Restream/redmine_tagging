@@ -1,0 +1,9 @@
+<% tagtitle = tag.gsub(/^#/, '') %>
+<% form_tag("/issues?set_filter=1", :id => "tag-#{tagtitle}") do %>
+  <%= hidden_field_tag 'project_id', project.id if project %>
+  <%= hidden_field_tag 'fields[]', 'tags' %>
+  <%= hidden_field_tag 'operators[status_id]', 'o' %>
+  <%= hidden_field_tag 'operators[tags]', '=' %>
+  <%= hidden_field_tag 'values[tags][]', tag %>
+  <%= link_to tag, 'javascript:void(0);', :onclick => "document.getElementById('tag-#{tagtitle}').submit()" %>
+<% end %>
