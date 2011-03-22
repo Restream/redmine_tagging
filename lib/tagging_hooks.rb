@@ -185,6 +185,24 @@ module TaggingPlugin
         return field
       end
 
+      def view_reports_issue_report_split_content_right(context = {})
+        @tags = ActsAsTaggableOn::Tagging.find_all_by_context(context[:project].identifier.gsub '-', '_').map(&:tag).uniq
+        @tags_by_status = IssueTag.by_issue_status(context[:project])
+        report = "<h3>"
+        report += "#{l(:field_tags)} &nbsp;&nbsp;"
+        report += link_to(image_tag('zoom_in.png'), {
+          :controller => "report",
+          :action => 'issue_report_details',
+          :detail => 'author'})
+        report += "</h3>"
+        report += context[:controller].send(:render_to_string, :partial => 'reports/simple', :locals => {
+          :data => @tags_by_status,
+          :field_name => "tag",
+          :rows => @tags })
+        report += "<br/>"
+        return report
+      end
+
     end
   end
 end
