@@ -66,7 +66,6 @@ module TaggingPlugin
       base.class_eval do
         unloadable # Send unloadable so it will not be unloaded in development
         alias_method_chain :column_content, :tags
-        include TaggingHelper
       end
     end
 
