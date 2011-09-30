@@ -26,7 +26,7 @@ api.array :issues, api_meta(:total_count => @issue_count, :offset => @offset, :l
 
       api.array :tags do
         issue.issue_tags.each do |issue_tag|
-          api.tag issue_tag.tag[1..-1]
+          api.tag(:id => issue_tag.tag[1..-1])
         end
       end
     end
