@@ -35,12 +35,12 @@ use a fork of it. Installation is performed with:
 You need to set up database for acts-as-taggable-on:
 
 1a) for Rails 2 (which Redmine currently uses):
-  $ script/generate acts_as_taggable_on_migration
+  $ env RAILS_ENV=production script/generate acts_as_taggable_on_migration
 1b) for Rails 3:
   $ rails generation acts_as_taggable_on:migration
 2)
-  $ rake db:migrate
-  $ rake db:migrate_plugins
+  $ rake db:migrate RAILS_ENV=production
+  $ rake db:migrate_plugins RAILS_ENV=production
 
 See the README of acts-as-taggable-on for details.
 
@@ -49,7 +49,7 @@ I've added a switch so you can choose between in-line tag editing with
 edit field. After you've changed the setting in Administration ->
 Plugins -> Configure -> Tagging, run
 
-  $ rake redmine:tagging:reconfigure
+  $ rake redmine:tagging:reconfigure RAILS_ENV=production
 
 to put tags in the body or remove them, depending on what you
 configured for your installation. Not doing so will cause data (tag)
