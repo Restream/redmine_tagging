@@ -19,7 +19,7 @@ needs patches to make it compatible with rails 2.3.5, which Redmine
 uses.
 
 The plugin also needs rails_sql_views 0.7.0, installed by doing:
-  $ git clone git://github.com/woodchuck/rails_sql_views.git
+  $ git clone http://github.com/woodchuck/rails_sql_views.git
   $ cd rails_sql_views
   $ rake gem
   $ sudo gem install --local pkg/rails_sql_views-0.7.0.gem
@@ -29,18 +29,18 @@ The plugin also needs rails_sql_views 0.7.0, installed by doing:
 While patches to acts-as-taggable-on are not merged to upstream, you should
 use a fork of it. Installation is performed with:
 
-  $ script/plugin install git://github.com/rymai/acts-as-taggable-on.git
-  $ script/plugin install git://github.com/friflaj/redmine_tagging.git
+  $ script/plugin install http://github.com/rymai/acts-as-taggable-on.git
+  $ script/plugin install http://github.com/friflaj/redmine_tagging.git
 
 You need to set up database for acts-as-taggable-on:
 
 1a) for Rails 2 (which Redmine currently uses):
-  $ script/generate acts_as_taggable_on_migration
+  $ env RAILS_ENV=production script/generate acts_as_taggable_on_migration
 1b) for Rails 3:
   $ rails generation acts_as_taggable_on:migration
 2)
-  $ rake db:migrate
-  $ rake db:migrate_plugins
+  $ rake db:migrate RAILS_ENV=production
+  $ rake db:migrate_plugins RAILS_ENV=production
 
 See the README of acts-as-taggable-on for details.
 
@@ -49,7 +49,7 @@ I've added a switch so you can choose between in-line tag editing with
 edit field. After you've changed the setting in Administration ->
 Plugins -> Configure -> Tagging, run
 
-  $ rake redmine:tagging:reconfigure
+  $ rake redmine:tagging:reconfigure RAILS_ENV=production
 
 to put tags in the body or remove them, depending on what you
 configured for your installation. Not doing so will cause data (tag)
@@ -67,14 +67,14 @@ it from the body.
 
 If you're getting "Mysql::Error: Specified key was too long; max key length is 1000 bytes: CREATE  INDEX `index_taggings_on_taggable_id_and_taggable_type_and_context` ON `taggings` (`taggable_id`, `taggable_type`, `context`)", that's a known problem in mysql, triggered by acts-as-taggable-on. You can work around it by changing
 
-add_index :taggings, :tag_id
-add_index :taggings, [:taggable_id, :taggable_type, :context]
+  add_index :taggings, :tag_id
+  add_index :taggings, [:taggable_id, :taggable_type, :context]
 
 into
 
-add_index :taggings, :tag_id
-add_index :taggings, :taggable_id
-add_index :taggings, :taggable_type
-add_index :taggings, :context
+  add_index :taggings, :tag_id
+  add_index :taggings, :taggable_id
+  add_index :taggings, :taggable_type
+  add_index :taggings, :context
 
 in the migration of acts-as-taggable-on
