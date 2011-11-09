@@ -195,7 +195,7 @@ module TaggingPlugin
           :action => 'issue_report_details',
           :detail => 'author'})
         report += "</h3>"
-        report += context[:controller].send(:render_to_string, :partial => 'reports/simple', :locals => {
+        report += context[:controller].send(:render_to_string, :partial => 'reports/simple_tags', :locals => {
           :data => @tags_by_status,
           :field_name => "tag",
           :rows => @tags })
