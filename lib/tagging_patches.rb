@@ -53,6 +53,9 @@ module TaggingPlugin
         acts_as_taggable
 
         has_many :issue_tags
+        
+        alias_method_chain :create_journal, :tags
+        alias_method_chain :init_journal, :tags
       end
     end
 
@@ -60,6 +63,26 @@ module TaggingPlugin
     end
 
     module InstanceMethods
+      def create_journal_with_tags
+        if @current_journal
+          tag_context = project.identifier.gsub('-', '_')
+          before = @issue_tags_before_change
+          after = tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
+          unless before == after
+            @current_journal.details << JournalDetail.new(:property => 'attr',
+                                                          :prop_key => 'tags',
+                                                          :old_value => before,
+                                                          :value => after)
+          end
+        end
+        create_journal_without_tags
+      end
+
+      def init_journal_with_tags(user, notes = "")
+        tag_context = project.identifier.gsub('-', '_')
+        @issue_tags_before_change = tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
+        init_journal_without_tags(user, notes)
+      end
     end
   end
 
