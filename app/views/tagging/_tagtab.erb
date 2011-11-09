@@ -1,16 +1,19 @@
-<% if IssueTag.all.any? %>
+<% tags = @project.issues.map{ |i| i.taggings.map{ |tg| tg.tag } }.flatten.uniq %>
+
+<% if tags.any? %>
 <table class="list">
   <thead><tr>
   <th><%= l(:label_tagname) %></th>
   <th></th>
   </tr></thead>
   <tbody>
-<% for issue_tag in IssueTag.all %>
+<% for issue_tag in tags %>
   <tr class="<%= cycle 'odd', 'even' %>">
-    <td><%=h(issue_tag.title) %></td>
+    <td>
+      <%= render :partial => "tagging/taglink", :locals => {:tag => issue_tag.name, :project => @project} %>
+    </td>
     <td class="buttons">
-      <%= link_to l(:button_edit), {:controller => 'issue_tags', :action => 'edit', :id => issue_tag.id }, :class => 'icon icon-edit' %>
-      <%= link_to l(:button_delete), {:controller => 'issue_tags', :action => 'destroy', :id => issue_tag.id }, :method => :post, :class => 'icon icon-del' %>
+      <%# link_to l(:button_delete), {:controller => 'issue_tags', :action => 'destroy', :id => issue_tag.id }, :method => :post, :class => 'icon icon-del' %>
     </td>
   </tr>
 <% end %>
