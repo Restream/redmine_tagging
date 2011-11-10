@@ -21,24 +21,6 @@ module TaggingPlugin
     end
   end
 
-  module JournalPatch
-    def self.included(base) # :nodoc:
-      base.extend(ClassMethods)
-      base.send(:include, InstanceMethods)
-
-      base.class_eval do
-        activity_provider_options["issues"][:find_options][:conditions] +=
-          " OR journals.journalized_type = 'Issue' AND (journal_details.prop_key = 'tags' OR journals.notes <> '')"
-      end
-    end
-
-    module ClassMethods
-    end
-
-    module InstanceMethods
-    end
-  end
-
   module WikiPagePatch
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
@@ -152,8 +134,6 @@ module TaggingPlugin
 end
 
 Issue.send(:include, TaggingPlugin::IssuePatch) unless Issue.included_modules.include? TaggingPlugin::IssuePatch
-
-Journal.send(:include, TaggingPlugin::JournalPatch) unless Journal.included_modules.include? TaggingPlugin::JournalPatch
 
 WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
 
