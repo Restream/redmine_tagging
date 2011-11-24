@@ -12,6 +12,15 @@ module TaggingPlugin
             :locals => context
           })
       end
+      
+      def view_wiki_sidebar_bottom(context={ })
+        return '' if Setting.plugin_redmine_tagging[:sidebar_tagcloud] != "1"
+
+        return context[:controller].send(:render_to_string, {
+            :partial => 'tagging/tagcloud_search',
+            :locals => context
+          })
+      end
 
       def view_issues_show_details_bottom(context={ })
         return '' if Setting.plugin_redmine_tagging[:issues_inline] == "1"
