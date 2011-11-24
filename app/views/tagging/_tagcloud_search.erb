@@ -19,9 +19,19 @@
 
     <div id='tagcloud'>
       <% tags.keys.sort.each do |tag| %>
-        <%= link_to("#{tag}", {:controller => "search", :action => "index", :id => @project, :q => tag, :wiki_pages => true, :issues => true}) %>
+        <%
+          count = tags[tag]
+          if Setting.plugin_redmine_tagging[:dynamic_font_size] == "1"
+            size = 8 + ((count - min) * factor)
+            style = {:style => "font-size: #{size}pt" }
+          else
+            style = {}
+          end
+        %>
+        <%= link_to("#{tag}", {:controller => "search", :action => "index", :id => @project, :q => tag, :wiki_pages => true }) %>
       <% end %>
     </div>
 
   <% end %>
+
 <% end %>

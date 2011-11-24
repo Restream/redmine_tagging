@@ -33,4 +33,38 @@
     </div>
 
   <% end %>
+
+<% else %>
+  <%
+      tags = {}
+      Issue.all_tag_counts.each {|tag|
+        tags[tag.name] = tag.count
+      }
+      WikiPage.all_tag_counts.each {|tag|
+        tags[tag.name] = tags[tag.name].to_i + tag.count
+      }
+
+      tags = tags.reject {|key,value| value == 0 }
+  %>
+  <% if tags.size > 0
+      min = tags.values.min
+      factor = 10.0 / ((tags.values.max - min) + 1)
+  %>
+    <h3><%= l(:field_tags) %></h3>
+
+    <div id='tagcloud'>
+      <% tags.keys.sort.each do |tag| %>
+        <%
+          count = tags[tag]
+          if Setting.plugin_redmine_tagging[:dynamic_font_size] == "1"
+            size = 8 + ((count - min) * factor)
+            style = {:style => "font-size: #{size}pt" }
+          else
+            style = {}
+          end
+        %>
+        <%= render :partial => "tagging/taglink", :locals => {:tag => tag} %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
