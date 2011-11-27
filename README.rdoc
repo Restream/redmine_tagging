@@ -12,17 +12,19 @@ Spaces _or_ commas will act as a separator when editing tags
 wiki sidebar. The tagcloud will automatically be rendered in the
 issues list sidebar.
 
-This plugin needs acts-as-taggable-on
+This plugin needs acts-as-taggable-on from rymai
 (http://github.com/rymai/acts-as-taggable-on) to be installed. The
 original plugin from http://github.com/mbleigh/acts-as-taggable-on
 needs patches to make it compatible with rails 2.3.5, which Redmine
 uses.
 
-The plugin also needs rails_sql_views 0.7.0, installed by doing:
+The plugin also needs rails_sql_views. It might install automatically
+by just doing 'gem install rails_sql_views'. If not (it didn't for me when 0.7.0 was available),
+try:
   $ git clone http://github.com/woodchuck/rails_sql_views.git
   $ cd rails_sql_views
   $ rake gem
-  $ sudo gem install --local pkg/rails_sql_views-0.7.0.gem
+  $ sudo gem install --local pkg/rails_sql_views-0.*.gem
 
 = Installation
 
