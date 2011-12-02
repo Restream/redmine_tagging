@@ -44,7 +44,7 @@ module TaggingPlugin
       if field == "tags"
         selected_values = values_for(field)
 
-        sql = selected_values.collect{|val| "'#{val.downcase.gsub('\'', '')}'"}.join(',')
+        sql = selected_values.collect{|val| "'#{ActiveRecord::Base.connection.quote_string(val.downcase.gsub('\'', ''))}'"}.join(',')
         sql = "(#{Issue.table_name}.id in (select taggable_id from taggings join tags on tags.id = taggings.tag_id where taggable_type='Issue' and tags.name in (#{sql})))"
         sql = "(not #{sql})" if operator == '!'
 
