@@ -5,6 +5,9 @@ Simple tagging for redmine. Features:
 * Tag suggestion/autocomplete
 * Redmine search integration (search for #tag to find wikis/issues)
 * Filter issues on tags
+* Project summary
+* Mass assignment and detachment
+* Issue journal logging
 
 Spaces _or_ commas will act as a separator when editing tags
 
