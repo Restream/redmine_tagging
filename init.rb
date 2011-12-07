@@ -82,7 +82,9 @@ Redmine::Plugin.register :redmine_tagging do
         end
 
         taglinks = tags.collect{|tag|
-          link_to("#{tag}", {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => false})
+          search_url = {:controller => "search", :action => "index", :id => project, :q => tag}
+          search_url.merge!(obj.is_a?(WikiContent) ? { :wiki_pages => true, :issues => false } : { :wiki_pages => false, :issues => true })
+          link_to("#{tag}", search_url)
         }.join('&nbsp;')
         "<div class='tags'>#{taglinks}</div>"
       else
