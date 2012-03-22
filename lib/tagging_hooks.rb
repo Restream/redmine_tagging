@@ -67,11 +67,11 @@ module TaggingPlugin
 
       def controller_issues_bulk_edit_before_save(context = {})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
-
         return unless context[:params] && context[:params]['issue']
 
-        issue = context[:issue]
         tags = context[:params]['issue']['tags'].to_s
+        return unless tags.present?
+        issue = context[:issue]
         tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
         tag_context = issue.project.identifier.gsub('-', '_')
 
