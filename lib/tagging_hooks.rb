@@ -209,7 +209,8 @@ module TaggingPlugin
         field = "<p>
             <label>#{ l(:field_tags) }</label>
             #{ text_field_tag 'issue[tags]', '', :size => 18 }<br>
-            <input type=\"checkbox\" name=\"append_tags\">#{ l(:append_tags) }<br>
+            <input type=\"checkbox\" name=\"append_tags\" checked=\"checked\">
+            #{ l(:append_tags) }<br>
           </p>"
         return field
       end
