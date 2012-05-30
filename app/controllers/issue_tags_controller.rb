@@ -7,7 +7,8 @@ class IssueTagsController < ApplicationController
 
   def destroy
     tag = @object
-    tag.taggings.find(:all, :conditions => ['context = ?', @project.identifier.gsub('-', '_')]).
+    context = TaggingPlugin::ContextHelper.context_for(@project)
+    tag.taggings.find(:all, :conditions => ['context = ?', context]).
       each{ |tg| tg.destroy }
     tag.destroy unless tag.taggings.any?
     flash[:notice] = l(:notice_successful_detached)

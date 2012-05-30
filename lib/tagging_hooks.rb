@@ -27,7 +27,7 @@ module TaggingPlugin
 
         issue = context[:issue]
         snippet = ''
-        tag_context = issue.project.identifier.gsub('-', '_')
+        tag_context = ContextHelper.context_for(issue.project)
         tags = issue.tag_list_on(tag_context).sort
 
         return context[:controller].send(:render_to_string, {
@@ -41,7 +41,7 @@ module TaggingPlugin
 
         issue = context[:issue]
 
-        tag_context = issue.project.identifier.gsub('-', '_')
+        tag_context = ContextHelper.context_for(issue.project)
 
         tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
 
@@ -73,7 +73,7 @@ module TaggingPlugin
         return unless tags.present?
         issue = context[:issue]
         tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
-        tag_context = issue.project.identifier.gsub('-', '_')
+        tag_context = ContextHelper.context_for(issue.project)
 
         if context[:params]['append_tags']
           oldtags = issue.tags_on(tag_context)
@@ -94,7 +94,7 @@ module TaggingPlugin
         tags = context[:params]['issue']['tags'].to_s
 
         tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
-        tag_context = issue.project.identifier.gsub('-', '_')
+        tag_context = ContextHelper.context_for(issue.project)
 
         issue.set_tag_list_on(tag_context, tags)
         issue.save
@@ -117,7 +117,7 @@ module TaggingPlugin
         page = project.wiki.find_page(request.parameters['page'])
         return '' unless page
 
-        tag_context = project.identifier.gsub('-', '_')
+        tag_context = ContextHelper.context_for(issue.project)
         tags = ''
 
         if request.parameters['action'] == 'index'
@@ -162,7 +162,7 @@ module TaggingPlugin
         project = context[:page].wiki.project
 
         tags = context[:params]['wikipage_tags'].to_s.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
-        tag_context = project.identifier.gsub('-', '_')
+        tag_context = ContextHelper.context_for(project)
 
         context[:page].set_tag_list_on(tag_context, tags)
         context[:page].save
@@ -216,7 +216,9 @@ module TaggingPlugin
       end
 
       def view_reports_issue_report_split_content_right(context = {})
-        @tags = ActsAsTaggableOn::Tagging.find_all_by_context(context[:project].identifier.gsub '-', '_').map(&:tag).uniq
+        @tags = ActsAsTaggableOn::Tagging \
+          .find_all_by_context(ContextHelper.context_for(context[:project])) \
+          .map(&:tag).uniq
         @tags_by_status = IssueTag.by_issue_status(context[:project])
         report = "<h3>"
         report += "#{l(:field_tags)} &nbsp;&nbsp;"
