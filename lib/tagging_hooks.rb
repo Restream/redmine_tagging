@@ -1,5 +1,3 @@
-
-
 module TaggingPlugin
   module Hooks
     class LayoutHook < Redmine::Hook::ViewListener
@@ -85,7 +83,7 @@ module TaggingPlugin
 
       end
 
-      def controller_issues_edit_after_save(context = {})
+      def controller_issues_edit_before_save(context = {})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
         return unless context[:params] && context[:params]['issue']
@@ -97,10 +95,9 @@ module TaggingPlugin
         tag_context = ContextHelper.context_for(issue.project)
 
         issue.set_tag_list_on(tag_context, tags)
-        issue.save
       end
 
-      alias_method :controller_issues_new_after_save, :controller_issues_edit_after_save
+      alias_method :controller_issues_new_before_save, :controller_issues_edit_before_save
 
       # wikis have no view hooks
       def view_layouts_base_content(context = {})
