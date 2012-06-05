@@ -219,10 +219,6 @@ module TaggingPlugin
         @tags_by_status = IssueTag.by_issue_status(context[:project])
         report = "<h3>"
         report += "#{l(:field_tags)} &nbsp;&nbsp;"
-        report += link_to(image_tag('zoom_in.png'), {
-          :controller => "report",
-          :action => 'issue_report_details',
-          :detail => 'author'})
         report += "</h3>"
         report += context[:controller].send(:render_to_string, :partial => 'reports/simple_tags', :locals => {
           :data => @tags_by_status,
