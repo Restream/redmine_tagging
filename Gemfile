@@ -3,4 +3,5 @@ gem "acts-as-taggable-on",
   :branch => "rails2"
 
 gem "rails_sql_views",
-  :git => "git://github.com/mremolt/rails_sql_views.git"
+  :git => "git://github.com/Undev/rails_sql_views.git",
+  :branch => "rails2"
