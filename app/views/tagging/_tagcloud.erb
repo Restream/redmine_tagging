@@ -1,6 +1,6 @@
 <% if project %>
   <%
-      context = project.identifier.gsub '-', '_'
+      context = TaggingPlugin::ContextHelper.context_for(project)
       tags = {}
       Issue.tag_counts_on(context).each {|tag|
         tags[tag.name] = tag.count
