@@ -1,0 +1,7 @@
+# Japanese strings go here for Rails i18n
+ja:
+  field_tags: "タグ"
+  tagging_wiki_pages_inline: "Wikiページのタグをインラインで編集する"
+  tagging_issues_inline: "チケットのタグをインラインで編集する"
+  tagging_sidebar_tagcloud: "チケットのサイドバーでタグクラウドを表示する"
+  tagging_dynamic_font_size: "タグの使用頻度に基づいてタグクラウドのフォントサイズを変更する"
