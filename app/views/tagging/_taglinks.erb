@@ -2,8 +2,7 @@
   <th><%= l(:field_tags) %>:</th>
   <td>
   <% tags.each do |tag| %>
-    <% tagtitle = tag.gsub(/^#/, '') %>
-    <%= render :partial => "tagging/taglink", :locals => {:tag => tag, :project => @project} %>
+    <%= link_to_project_tag_filter(@project, tag) %>
   <% end %>
   </td>
 </tr>

@@ -10,7 +10,7 @@
 <% for issue_tag in tags %>
   <tr class="<%= cycle 'odd', 'even' %>">
     <td>
-      <%= render :partial => "tagging/taglink", :locals => {:tag => issue_tag.name, :project => @project} %>
+      <%= link_to_project_tag_filter(@project, issue_tag.name) %>
     </td>
     <td class="buttons">
       <%= link_to(l(:detach), {:controller => 'issue_tags', :action => 'destroy', :id => issue_tag.id,

@@ -24,8 +24,10 @@ module TaggingPlugin
       if project.nil?
         tags = ActsAsTaggableOn::Tag.find(:all, :conditions => "id in (select tag_id from taggings where taggable_type = 'Issue')")
       else
+
+        context = ContextHelper.context_for(project)
         tags = ActsAsTaggableOn::Tag.find(:all,
-                :conditions => ["id in (select tag_id from taggings where taggable_type = 'Issue' and context = ?)", project.identifier.gsub('-', '_')])
+                :conditions => ["id in (select tag_id from taggings where taggable_type = 'Issue' and context = ?)", context])
       end
       tags = tags.collect {|tag| [tag.name.gsub(/^#/, ''), tag.name]}
 
@@ -79,7 +81,7 @@ module TaggingPlugin
         if value.class.name == "Array"
           if value.first.class.name == "IssueTag"
             value.map do |issue_tag|
-              render :partial => "tagging/taglink", :locals => {:tag => issue_tag.tag, :project => @project}
+              link_to_project_tag_filter(@project, issue_tag.tag)
             end.join(', ')
           end
         else

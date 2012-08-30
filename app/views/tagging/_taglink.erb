@@ -1,1 +1,0 @@
-<%= link_to tag, "#{ "/projects/#{project.identifier}" if defined?(project) && project }/issues?set_filter=1&f[]=tags&op[tags]=%3D&v[tags][]=%23#{tag.from(1)}#{ "&f[]=status_id&op[status_id]=#{status}&v[status_id][]=1" if defined?(status) }" %>
