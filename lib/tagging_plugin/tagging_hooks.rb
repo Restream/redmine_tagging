@@ -81,22 +81,19 @@ module TaggingPlugin
             tags += ', ' + oldtags.map(&:name).join(', ')
           end
         end
-        issue.set_tag_list_on(tag_context, tags)
 
+        issue.tags_to_update = tags
       end
 
       def controller_issues_edit_before_save(context = {})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
-
         return unless context[:params] && context[:params]['issue']
 
         issue = context[:issue]
         tags = context[:params]['issue']['tags'].to_s
 
         tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
-        tag_context = ContextHelper.context_for(issue.project)
-
-        issue.set_tag_list_on(tag_context, tags)
+        issue.tags_to_update = tags
       end
 
       alias_method :controller_issues_new_before_save, :controller_issues_edit_before_save

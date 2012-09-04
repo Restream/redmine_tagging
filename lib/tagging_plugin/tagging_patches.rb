@@ -50,14 +50,21 @@ module TaggingPlugin
       base.class_eval do
         unloadable
 
+        after_save :update_tags
         acts_as_taggable
+        
+        def save_tags
+          # If we change the project id
+          # tag update should be made via tags_to_update.
+          #
+          super if !project_id_changed?
+          true
+        end
 
         has_many :issue_tags
         
         alias_method_chain :create_journal, :tags
         alias_method_chain :init_journal, :tags
-
-
       end
     end
 
@@ -85,6 +92,24 @@ module TaggingPlugin
         @issue_tags_before_change = tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
         init_journal_without_tags(user, notes)
       end
+
+      def tags_to_update=(tags)
+        @tags_to_update = lambda do |project_context|
+          set_tag_list_on(project_context, tags)
+        end
+      end
+
+      private
+        def update_tags
+          project_context = ContextHelper.context_for(project)
+          # Fix context if project changed
+          if project_id_changed? && !new_record?
+            taggings.update_all(:context => project_context)
+          end
+
+          @tags_to_update.call(project_context) if @tags_to_update
+          true
+        end
     end
   end
 
