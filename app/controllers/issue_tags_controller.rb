@@ -9,9 +9,10 @@ class IssueTagsController < ApplicationController
     tag = @object
 
     context = TaggingPlugin::ContextHelper.context_for(@project)
+
     tag.taggings.find(:all, :conditions => ['context = ?', context]).
       each{ |tg| tg.destroy }
-    
+
     tag.destroy unless tag.taggings.any?
 
     flash[:notice] = l(:notice_successful_detached)
