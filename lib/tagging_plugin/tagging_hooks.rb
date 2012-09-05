@@ -39,7 +39,7 @@ module TaggingPlugin
       def view_issues_form_details_bottom(context={ })
         return '' if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
-        issue = Issue.visible.find_by_id(context[:issue].id)
+        issue = Issue.visible.find_by_id(context[:issue].id) || context[:issue]
 
         tag_context = ContextHelper.context_for(issue.project)
 
