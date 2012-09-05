@@ -1,7 +1,4 @@
 class FixBrokenIssueAndWikiContexts < ActiveRecord::Migration
-
-  PREFIX = "context_"
-
   def self.remove_tagging(tagging)
     tag = tagging.tag
     tagging.destroy
