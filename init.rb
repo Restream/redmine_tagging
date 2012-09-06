@@ -77,17 +77,19 @@ Redmine::Plugin.register :redmine_tagging do
         end
 
         context = TaggingPlugin::ContextHelper.context_for(project)
-        # only save if there are differences
-        if obj.tag_list_on(context).sort.join(',') != tags.join(',')
-          obj.set_tag_list_on(context, tags.join(', '))
+        tags_present = obj.tag_list_on(context).sort.join(',')
+        new_tags = tags.join(',')
+        if tags_present != new_tags
+          obj.tags_to_update = new_tags
           obj.save
         end
 
-        taglinks = tags.collect{|tag|
+        taglinks = tags.collect do |tag|
           search_url = {:controller => "search", :action => "index", :id => project, :q => tag}
           search_url.merge!(obj.is_a?(WikiPage) ? { :wiki_pages => true, :issues => false } : { :wiki_pages => false, :issues => true })
           link_to("#{tag}", search_url)
-        }.join('&nbsp;')
+        end.join('&nbsp;')
+
         "<div class='tags'>#{taglinks}</div>"
       else
         ''

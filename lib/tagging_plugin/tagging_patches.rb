@@ -50,16 +50,9 @@ module TaggingPlugin
       base.class_eval do
         unloadable
 
-        after_save :update_tags
+        before_save :update_tags
         acts_as_taggable
-        
-        def save_tags
-          # If we change the project id
-          # tag update should be made via tags_to_update.
-          #
-          super if !project_id_changed?
-          true
-        end
+        after_save :cleanup_tags
 
         has_many :issue_tags
         
@@ -94,20 +87,32 @@ module TaggingPlugin
       end
 
       def tags_to_update=(tags)
-        @tags_to_update = lambda do |project_context|
-          set_tag_list_on(project_context, tags)
-        end
+        @tags_to_update = tags
       end
 
       private
         def update_tags
           project_context = ContextHelper.context_for(project)
+          
           # Fix context if project changed
           if project_id_changed? && !new_record?
             taggings.update_all(:context => project_context)
           end
 
-          @tags_to_update.call(project_context) if @tags_to_update
+          if @tags_to_update
+            set_tag_list_on(project_context, @tags_to_update)
+          end
+          
+          true
+        end
+
+        def cleanup_tags
+          if project_id_changed?
+            context = ContextHelper.context_for(project)
+            condition = ["context != ? AND taggable_id = ? AND taggable_type= ?", context, id, "Issue"]
+            ActsAsTaggableOn::Tagging.delete_all(condition)
+          end
+
           true
         end
     end
