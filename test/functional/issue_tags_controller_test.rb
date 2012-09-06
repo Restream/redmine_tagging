@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class IssueTagsControllerTest < ActionController::TestCase
-  fixtures :projects, :trackers, :projects_trackers, :issues, :users
+  fixtures :all
 
   def setup
     @request.session[:user_id] = 2
@@ -9,6 +9,7 @@ class IssueTagsControllerTest < ActionController::TestCase
 
     @issue_with_tags = setup_issue_with_tags(@some_tags)
     @project_with_tags = @issue_with_tags.project
+    @another_project = Project.find(:first, :conditions => ["id != ?", @project_with_tags.id])
   end
 
   def test_should_destroy_issue_tag
@@ -22,7 +23,6 @@ class IssueTagsControllerTest < ActionController::TestCase
   end
 
   def test_should_destroy_issue_tag_in_case_of_changed_project
-    @another_project = Project.find(:first, :conditions => ["id != ?", @project_with_tags.id])
     @issue_with_tags.project = @another_project
     @issue_with_tags.tracker = @another_project.trackers.first
     @issue_with_tags.save!
