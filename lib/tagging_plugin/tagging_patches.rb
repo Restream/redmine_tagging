@@ -23,9 +23,6 @@ module TaggingPlugin
 
   module WikiPagePatch
     def self.included(base) # :nodoc:
-      base.extend(ClassMethods)
-      base.send(:include, InstanceMethods)
-
       base.class_eval do
         unloadable
 
@@ -34,17 +31,10 @@ module TaggingPlugin
         has_many :wiki_page_tags
       end
     end
-
-    module ClassMethods
-    end
-
-    module InstanceMethods
-    end
   end
 
   module IssuePatch
     def self.included(base) # :nodoc:
-      base.extend(ClassMethods)
       base.send(:include, InstanceMethods)
 
       base.class_eval do
@@ -55,13 +45,10 @@ module TaggingPlugin
         after_save :cleanup_tags
 
         has_many :issue_tags
-        
+
         alias_method_chain :create_journal, :tags
         alias_method_chain :init_journal, :tags
       end
-    end
-
-    module ClassMethods
     end
 
     module InstanceMethods
@@ -93,7 +80,7 @@ module TaggingPlugin
       private
         def update_tags
           project_context = ContextHelper.context_for(project)
-          
+
           # Fix context if project changed
           if project_id_changed? && !new_record?
             taggings.update_all(:context => project_context)
@@ -102,7 +89,7 @@ module TaggingPlugin
           if @tags_to_update
             set_tag_list_on(project_context, @tags_to_update)
           end
-          
+
           true
         end
 
@@ -120,7 +107,6 @@ module TaggingPlugin
 
   module WikiControllerPatch
     def self.included(base) # :nodoc:
-      base.extend(ClassMethods)
       base.send(:include, InstanceMethods)
 
       base.class_eval do
@@ -128,9 +114,6 @@ module TaggingPlugin
 
         alias_method_chain :edit, :save_tags
       end
-    end
-
-    module ClassMethods
     end
 
     module InstanceMethods
