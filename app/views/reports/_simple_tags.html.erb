@@ -12,12 +12,12 @@
 <% for tag in rows %>
 <tr class="<%= cycle("odd", "even") %>">
   <td>
-    <%= link_to_project_tag_filter(@project, tag) %>
+    <%= link_to_project_tag_filter(@project, tag.name) %>
   </td>
   <td align="center">
     <%= link_to_project_tag_filter(
       @project,
-      tag,
+      tag.name,
       :status => "o",
       :title => aggregate(data, { field_name => tag.id, "closed" => 0 }))
     %>
@@ -25,7 +25,7 @@
   <td align="center">
     <%= link_to_project_tag_filter(
       @project,
-      tag,
+      tag.name,
       :status => "c",
       :title => aggregate(data, { field_name => tag.id, "closed" => 1 }))
     %>
@@ -33,7 +33,7 @@
   <td align="center">
     <%= link_to_project_tag_filter(
       @project,
-      tag,
+      tag.name,
       :title => aggregate(data, { field_name => tag.id }))
     %>
   </td>
