@@ -78,9 +78,11 @@ module TaggingPlugin
 
         if value.class.name == "Array"
           if value.first.class.name == "IssueTag"
-            value.map do |issue_tag|
+            links = value.map do |issue_tag|
               link_to_project_tag_filter(@project, issue_tag.tag)
-            end.join(', ')
+            end
+
+            links.join(', ')
           end
         else
           column_content_without_tags(column, issue)
