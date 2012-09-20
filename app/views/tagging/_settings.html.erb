@@ -1,16 +1,16 @@
-    <p>
-        <%= content_tag(:label, l(:tagging_wiki_pages_inline)) %>
-        <%= check_box_tag("settings[wiki_pages_inline]", "1", Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1") %>
-    </p>
-    <p>
-        <%= content_tag(:label, l(:tagging_issues_inline)) %>
-        <%= check_box_tag("settings[issues_inline]", "1", Setting.plugin_redmine_tagging[:issues_inline] == "1") %>
-    </p>
-    <p>
-        <%= content_tag(:label, l(:tagging_sidebar_tagcloud)) %>
-        <%= check_box_tag("settings[sidebar_tagcloud]", "1", Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1") %>
-    </p>
-    <p>
-        <%= content_tag(:label, l(:tagging_dynamic_font_size)) %>
-        <%= check_box_tag("settings[dynamic_font_size]", "1", Setting.plugin_redmine_tagging[:dynamic_font_size] == "1") %>
-    </p>
+<p>
+    <%= content_tag(:label, l(:tagging_wiki_pages_inline)) %>
+    <%= check_box_tag("settings[wiki_pages_inline]", "1", Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1") %>
+</p>
+<p>
+    <%= content_tag(:label, l(:tagging_issues_inline)) %>
+    <%= check_box_tag("settings[issues_inline]", "1", Setting.plugin_redmine_tagging[:issues_inline] == "1") %>
+</p>
+<p>
+    <%= content_tag(:label, l(:tagging_sidebar_tagcloud)) %>
+    <%= check_box_tag("settings[sidebar_tagcloud]", "1", Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1") %>
+</p>
+<p>
+    <%= content_tag(:label, l(:tagging_dynamic_font_size)) %>
+    <%= check_box_tag("settings[dynamic_font_size]", "1", Setting.plugin_redmine_tagging[:dynamic_font_size] == "1") %>
+</p>
