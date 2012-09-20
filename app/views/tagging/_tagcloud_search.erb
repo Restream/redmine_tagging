@@ -1,37 +1,10 @@
-<% if project %>
+<h3><%= l(:field_tags) %></h3>
+
+<div id='tagcloud'>
   <%
-      context = TaggingPlugin::ContextHelper.context_for(project)
-      tags = {}
-      Issue.tag_counts_on(context).each {|tag|
-        tags[tag.name] = tag.count
-      }
-      WikiPage.tag_counts_on(context).each {|tag|
-        tags[tag.name] = tags[tag.name].to_i + tag.count
-      }
-
-      tags = tags.reject {|key,value| value == 0 }
+    tag_cloud_in_project(@project) do |tag, factor|
+      options = {:style => "font-size: #{10 * factor + 9}pt" }
   %>
-  <% if tags.size > 0
-      min = tags.values.min
-      factor = 10.0 / ((tags.values.max - min) + 1)
-  %>
-    <h3><%= l(:field_tags) %></h3>
-
-    <div id='tagcloud'>
-      <% tags.keys.sort.each do |tag| %>
-        <%
-          count = tags[tag]
-          if Setting.plugin_redmine_tagging[:dynamic_font_size] == "1"
-            size = 8 + ((count - min) * factor)
-            style = {:style => "font-size: #{size}pt" }
-          else
-            style = {}
-          end
-        %>
-        <%= link_to("#{tag}", {:controller => "search", :action => "index", :id => @project, :q => tag[1..-1], :wiki_pages => true }) %>
-      <% end %>
-    </div>
-
+    <%= link_to("#{tag}", {:controller => "search", :action => "index", :id => @project, :q => tag, :wiki_pages => true }, options) %>
   <% end %>
-
-<% end %>
+</div>

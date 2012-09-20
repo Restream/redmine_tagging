@@ -1,5 +1,3 @@
-
-
 module TaggingPlugin
   module Hooks
     class LayoutHook < Redmine::Hook::ViewListener
@@ -20,6 +18,46 @@ module TaggingPlugin
             :partial => 'tagging/tagcloud_search',
             :locals => context
           })
+      end
+
+      def view_layouts_base_html_head(context = {})
+        if Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1" \
+           && context[:controller].is_a?(WikiController)
+
+          tag_cloud = context[:controller].send(:render_to_string, {
+            :partial => 'tagging/tagcloud_search',
+            :locals => context
+          })
+
+          result = <<-TAGS
+            #{javascript_include_tag 'jquery-1.4.2.min.js', :plugin => 'redmine_tagging'}
+            <script type="text/javascript">
+              var $j = jQuery.noConflict();
+              $j(function() {
+                $j('#sidebar').append("#{escape_javascript(tag_cloud)}")
+              });
+            </script>
+          TAGS
+        else
+          result = ''
+        end
+
+        <<-TAGCLOUD
+          #{result}
+          <style>
+            span.tagMatches {
+              margin-left: 10px;
+            }
+
+            span.tagMatches span {
+              padding: 2px;
+              margin-right: 4px;
+              background-color: #0000AB;
+              color: #fff;
+              cursor: pointer;
+            }
+          </style>
+        TAGCLOUD
       end
 
       def view_issues_show_details_bottom(context={ })
@@ -153,43 +191,6 @@ module TaggingPlugin
         end
 
         return tags
-      end
-
-      def view_layouts_base_html_head(context = {})
-        if Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1" && context[:controller].is_a?(WikiController)
-          tag_cloud = context[:controller].send(:render_to_string, {
-            :partial => 'tagging/tagcloud_search',
-            :locals => context
-          })
-          result = %Q{
-            #{javascript_include_tag 'jquery-1.4.2.min.js', :plugin => 'redmine_tagging'}
-            <script type="text/javascript">
-              var $j = jQuery.noConflict();
-              $j(function() {
-                $j('#sidebar').append("#{escape_javascript(tag_cloud)}")
-              });
-            </script>
-          }
-
-        else
-          result = ''
-        end
-
-        return %Q{
-          #{result}
-          <style>
-            span.tagMatches {
-              margin-left: 10px;
-            }
-
-            span.tagMatches span {
-              padding: 2px;
-              margin-right: 4px;
-              background-color: #0000AB;
-              color: #fff;
-              cursor: pointer;
-            }
-          </style>}
       end
 
       def view_issues_bulk_edit_details_bottom(context = {})
