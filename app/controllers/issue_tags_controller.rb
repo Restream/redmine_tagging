@@ -10,9 +10,15 @@ class IssueTagsController < ApplicationController
 
     context = TaggingPlugin::ContextHelper.context_for(@project)
 
-    tag.taggings.find(:all, :conditions => ['context=?', context]).each do |tg|
-      tg.destroy
-
+    tag.taggings.find_each(:conditions => ['context=?', context]) do |tagging|
+      if tagging.taggable_type = "Issue"
+        affected_issue = Issue.find(tagging.taggable_id)
+        issue_tags = affected_issue.tag_list_on(context)
+        affected_issue.tags_to_update = issue_tags.select { |t| t != tag.name }
+        affected_issue.save
+      else
+        tagging.destroy
+      end
     end
 
     tag.destroy unless tag.taggings.any?
