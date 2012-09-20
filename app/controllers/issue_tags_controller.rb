@@ -10,8 +10,10 @@ class IssueTagsController < ApplicationController
 
     context = TaggingPlugin::ContextHelper.context_for(@project)
 
-    tag.taggings.find(:all, :conditions => ['context = ?', context]).
-      each{ |tg| tg.destroy }
+    tag.taggings.find(:all, :conditions => ['context=?', context]).each do |tg|
+      tg.destroy
+
+    end
 
     tag.destroy unless tag.taggings.any?
 
