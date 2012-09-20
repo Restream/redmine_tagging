@@ -23,13 +23,30 @@ module TaggingPlugin
 
   module WikiPagePatch
     def self.included(base) # :nodoc:
+      base.send(:include, InstanceMethods)
+
       base.class_eval do
         unloadable
 
+        attr_writer :tags_to_update
+
+        before_save :update_tags
         acts_as_taggable
 
         has_many :wiki_page_tags
       end
+    end
+
+    module InstanceMethods
+      private
+        def update_tags
+          if @tags_to_update
+            project_context = ContextHelper.context_for(project)
+            set_tag_list_on(project_context, @tags_to_update)
+          end
+
+          true
+        end
     end
   end
 
@@ -39,6 +56,8 @@ module TaggingPlugin
 
       base.class_eval do
         unloadable
+
+        attr_writer :tags_to_update
 
         before_save :update_tags
         acts_as_taggable
@@ -71,10 +90,6 @@ module TaggingPlugin
         tag_context = ContextHelper.context_for(project)
         @issue_tags_before_change = tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
         init_journal_without_tags(user, notes)
-      end
-
-      def tags_to_update=(tags)
-        @tags_to_update = tags
       end
 
       private
@@ -112,35 +127,17 @@ module TaggingPlugin
       base.class_eval do
         unloadable
 
-        alias_method_chain :edit, :save_tags
+        alias_method_chain :update, :tags
       end
     end
 
     module InstanceMethods
-      def edit_with_save_tags
-        if ! request.get?
-          page = @wiki.find_page(params[:page])
-          if page
-            content = page.content_for_version(params[:version])
-            txt = content.text.to_s
-
-            # if the body text wasn't change the after_save hook doesn't
-            # get called. This either forces a new space at the end, or
-            # removes it if it was already present. This fully undoes the
-            # performance gain that was intended by not saving the object
-            # because it will always perform 2 requests _and_ save the
-            # object, but whatyagonnado...
-            if params[:content][:text] == txt
-              if txt =~ / $/
-                params[:content][:text].rstrip!
-              else
-                params[:content][:text] += ' '
-              end
-            end
-          end
+      def update_with_tags
+        if tags = params[:wiki_page][:tags]
+          tags = TagsHelper.from_string(tags)
+          @page.tags_to_update = tags
         end
-
-        return edit_without_save_tags
+        update_without_tags
       end
     end
   end

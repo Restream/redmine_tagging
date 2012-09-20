@@ -28,7 +28,7 @@
             style = {}
           end
         %>
-        <%= link_to("#{tag}", {:controller => "search", :action => "index", :id => @project, :q => tag, :wiki_pages => true }) %>
+        <%= link_to("#{tag}", {:controller => "search", :action => "index", :id => @project, :q => tag[1..-1], :wiki_pages => true }) %>
       <% end %>
     </div>
 

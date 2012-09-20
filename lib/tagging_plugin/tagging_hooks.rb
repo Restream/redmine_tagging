@@ -12,7 +12,7 @@ module TaggingPlugin
             :locals => context
           })
       end
-      
+
       def view_wiki_sidebar_bottom(context={ })
         return '' if Setting.plugin_redmine_tagging[:sidebar_tagcloud] != "1"
 
@@ -72,7 +72,7 @@ module TaggingPlugin
         tags = context[:params]['issue']['tags'].to_s
         return unless tags.present?
         issue = context[:issue]
-        tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
+        tags = TagsHelper.from_string(tags)
         tag_context = ContextHelper.context_for(issue.project)
 
         if context[:params]['append_tags']
@@ -92,7 +92,7 @@ module TaggingPlugin
         issue = context[:issue]
         tags = context[:params]['issue']['tags'].to_s
 
-        tags = tags.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
+        tags = TagsHelper.from_string(tags)
         issue.tags_to_update = tags
       end
 
@@ -102,31 +102,36 @@ module TaggingPlugin
       def view_layouts_base_content(context = {})
         return '' if Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
 
-        return '' unless context[:controller].is_a? WikiController
+        return '' unless context[:controller].is_a?(WikiController)
 
         request = context[:request]
+
         return '' unless request.parameters
 
-        project = Project.find_by_identifier(request.parameters['id'])
+        project = Project.find_by_identifier(request.parameters['project_id'])
         return '' unless project
 
-        page = project.wiki.find_page(request.parameters['page'])
-        return '' unless page
+        page = project.wiki.find_page(request.parameters['id'])
 
         tag_context = ContextHelper.context_for(project)
         tags = ''
 
-        if request.parameters['action'] == 'index'
+        if page && request.parameters['action'] == 'index'
           tags = page.tag_list_on(tag_context).sort.collect {|tag|
-            link_to("#{tag}", {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true})
+            link_to("#{tag}", {:controller => "search", :action => "index", :project_id => project, :q => tag, :wiki_pages => true, :issues => true})
           }.join('&nbsp;')
 
           tags = "<h3>#{l(:field_tags)}:</h3><p>#{tags}</p>" if tags
         end
 
         if request.parameters['action'] == 'edit'
-          tags = page.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
-          tags = "<p id='tagging_wiki_edit_block'><label>#{l(:field_tags)}</label><br /><input id='wikipage_tags' name='wikipage_tags' size='120' type='text' value='#{h(tags)}'/></p>"
+          if page
+            tags = TagsHelper.to_string(page.tag_list_on(tag_context))
+          else
+            tags = ""
+          end
+
+          tags = "<p id='tagging_wiki_edit_block'><label>#{l(:field_tags)}</label><input id='wiki_page_tags' name='wiki_page[tags]' size='120' type='text' value='#{h(tags)}'/></p>"
 
           ac = ActsAsTaggableOn::Tag.find(:all,
               :conditions => ["id in (select tag_id from taggings
@@ -138,30 +143,16 @@ module TaggingPlugin
 
           tags += <<-generatedscript
             <script type="text/javascript">
-              var $j = jQuery.noConflict();
+              var $j = jQuery.noConflict()
               $j(document).ready(function() {
-                $j('#tagging_wiki_edit_block').insertAfter($j("#content_text").parent().parent());
-                $j('#wikipage_tags').tagSuggest({ tags: [#{ac}] });
-              });
+                $j('#tagging_wiki_edit_block').insertAfter($j("#content_text"))
+                $j('#wiki_page_tags').tagSuggest({ tags: [#{ac}] })
+              })
             </script>
           generatedscript
         end
 
         return tags
-      end
-
-      def controller_wiki_edit_after_save(context = {})
-        return if Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
-
-        return unless context[:params]
-
-        project = context[:page].wiki.project
-
-        tags = context[:params]['wikipage_tags'].to_s.split(/[#"'\s,]+/).collect{|tag| "##{tag}"}.join(', ')
-        tag_context = ContextHelper.context_for(project)
-
-        context[:page].set_tag_list_on(tag_context, tags)
-        context[:page].save
       end
 
       def view_layouts_base_html_head(context = {})

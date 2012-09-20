@@ -8,79 +8,180 @@ class TaggingTest < ActionController::IntegrationTest
 
     @some_tags = "#1, #2, #3,#4,#5"
     @issue_with_tags = setup_issue_with_tags(@some_tags)
-    
+    @wiki_page_with_tags = setup_wiki_page_with_tags(@some_tags)
+    @wiki_page_with_tags_content = @wiki_page_with_tags.content
 
     @project_with_tags = @issue_with_tags.project
     @another_project = Project.find(:first, :conditions => ["id != ?", @project_with_tags.id])
-  
+    @project_with_wiki_tags = @wiki_page_with_tags.project
+
     @another_project_context = TaggingPlugin::ContextHelper.context_for(@another_project)
   end
 
-  def test_should_create_tags_from_input
-    Setting.plugin_redmine_tagging[:issues_inline] = "0"
+  context "issue" do
+    def test_should_create_issue_tags_from_input
+      Setting.plugin_redmine_tagging[:issues_inline] = "0"
 
-    @new_issue_attrs = @issue_with_tags.attributes.merge({
-      "subject" => "new_issue",
-      "tags" => "10 11 12"
-    })
+      @new_issue_attrs = @issue_with_tags.attributes.merge({
+        "subject" => "new_issue",
+        "tags" => "10 11 12"
+      })
 
-    post_via_redirect(issues_path, :issue => @new_issue_attrs)
-    assert_response :success
-     
-    new_issue = Issue.find_by_subject("new_issue")
-    assert_equal 3, new_issue.taggings.size
+      get_via_redirect(new_project_issue_path(@project_with_tags))
+      assert_response :success
+      post_via_redirect(issues_path, :issue => @new_issue_attrs)
+      assert_response :success
+
+      new_issue = Issue.find_by_subject("new_issue")
+      assert_equal 3, new_issue.taggings.size
+    end
+
+    def test_should_update_issue_tags_from_input
+      Setting.plugin_redmine_tagging[:issues_inline] = "0"
+
+      issue_attrs = @issue_with_tags.attributes
+
+      issue_attrs['project_id'] = @another_project.id
+      issue_attrs['tracker'] = @another_project.trackers.first
+      issue_attrs['tags'] = "10 11 12"
+
+      get_via_redirect(edit_issue_path(@issue_with_tags))
+      assert_response :success
+      put_via_redirect(issue_path(@issue_with_tags), :issue => issue_attrs)
+      assert_response :success
+      get_via_redirect(issue_path(@issue_with_tags))
+      assert_response :success
+
+      @issue_with_tags.reload
+      assert_equal 3, @issue_with_tags.taggings.size
+      assert_equal [@another_project_context], @issue_with_tags.taggings.map(&:context).uniq
+    end
+
+    def test_should_create_inline_issue_tags
+      Setting.plugin_redmine_tagging[:issues_inline] = "1"
+
+      @new_issue_attrs = @issue_with_tags.attributes.merge({
+        "subject" => "new_issue",
+        "description" => "{{tag(10 11 12)}}"
+      })
+
+      get_via_redirect(new_project_issue_path(@project_with_tags))
+      assert_response :success
+      post_via_redirect(issues_path, :issue => @new_issue_attrs)
+      assert_response :success
+
+      new_issue = Issue.find_by_subject("new_issue")
+      assert_equal 3, new_issue.taggings.size
+    end
+
+    def test_should_update_inline_issue_tags
+      Setting.plugin_redmine_tagging[:issues_inline] = "1"
+
+      issue_attrs = @issue_with_tags.attributes
+
+      issue_attrs['project_id'] = @another_project.id
+      issue_attrs['tracker'] = @another_project.trackers.first
+      issue_attrs['description'] = "{{tag(6)}} {{tag(7 8)}}"
+
+      get_via_redirect(edit_issue_path(@issue_with_tags))
+      assert_response :success
+      put_via_redirect(issue_path(@issue_with_tags), :issue => issue_attrs)
+      assert_response :success
+      get_via_redirect(issue_path(@issue_with_tags))
+      assert_response :success
+
+      @issue_with_tags.reload
+      assert_equal 2, @issue_with_tags.taggings.size
+      assert_equal [@another_project_context], @issue_with_tags.taggings.map(&:context).uniq
+    end
   end
 
-  def test_should_update_tags_from_input
-    Setting.plugin_redmine_tagging[:issues_inline] = "0"
+  context "wiki_page" do
+    def test_should_create_wiki_page_tags_from_input
+      Setting.plugin_redmine_tagging[:wiki_pages_inline] = "0"
 
-    issue_attrs = @issue_with_tags.attributes
+      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, "newpage")
+      page_path = project_wiki_path(@project_with_wiki_tags, "newpage")
 
-    issue_attrs['project_id'] = @another_project.id
-    issue_attrs['tracker'] = @another_project.trackers.first
-    issue_attrs['tags'] = "10 11 12"
+      page_content = @wiki_page_with_tags_content.attributes
+      page_attrs = @wiki_page_with_tags.attributes
+      page_attrs['tags'] = "10 11 12"
 
-    put_via_redirect(issue_path(@issue_with_tags), :issue => issue_attrs)
-    assert_response :success
-    get_via_redirect(issue_path(@issue_with_tags))
-    assert_response :success
+      get_via_redirect(edit_page_path)
+      assert_response :success
+      put_via_redirect(page_path, :wiki_page => page_attrs, :content => page_content)
+      assert_response :success
+      get_via_redirect(page_path)
+      assert_response :success
 
-    @issue_with_tags.reload
-    assert_equal 3, @issue_with_tags.taggings.size
-    assert_equal [@another_project_context], @issue_with_tags.taggings.map(&:context).uniq
-  end
+      new_page = WikiPage.find_by_title("newpage")
+      assert_equal 3, new_page.taggings.size
+    end
 
-  def test_should_create_inline_tags
-    Setting.plugin_redmine_tagging[:issues_inline] = "1"
+    def test_should_update_wiki_page_tags_from_input
+      Setting.plugin_redmine_tagging[:wiki_pages_inline] = "0"
 
-    @new_issue_attrs = @issue_with_tags.attributes.merge({
-      "subject" => "new_issue",
-      "description" => "{{tag(10 11 12)}}"
-    })
+      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
+      page_path = project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
+      page_content = @wiki_page_with_tags_content.attributes
+      page_attrs = @wiki_page_with_tags.attributes
+      page_attrs['tags'] = "10 11 12"
 
-    post_via_redirect(issues_path, :issue => @new_issue_attrs)
-    assert_response :success
-     
-    new_issue = Issue.find_by_subject("new_issue")
-    assert_equal 3, new_issue.taggings.size
-  end
+      get_via_redirect(edit_page_path)
+      assert_response :success
+      put_via_redirect(page_path, :wiki_page => page_attrs, :content => page_content)
+      assert_response :success
+      get_via_redirect(page_path)
+      assert_response :success
 
-  def test_should_update_inline_tags
-    Setting.plugin_redmine_tagging[:issues_inline] = "1"
+      @wiki_page_with_tags.reload
+      assert_equal 3, @wiki_page_with_tags.taggings.size
+    end
 
-    issue_attrs = @issue_with_tags.attributes
+    def test_should_create_inline_wiki_page_tags
+      Setting.plugin_redmine_tagging[:wiki_pages_inline] = "1"
 
-    issue_attrs['project_id'] = @another_project.id
-    issue_attrs['tracker'] = @another_project.trackers.first
-    issue_attrs['description'] = "{{tag(6)}} {{tag(7 8)}}"
+      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, "newpage")
+      page_path = project_wiki_path(@project_with_wiki_tags, "newpage")
 
-    put_via_redirect(issue_path(@issue_with_tags), :issue => issue_attrs)
-    assert_response :success
-    get_via_redirect(issue_path(@issue_with_tags))
-    assert_response :success
+      page_content = @wiki_page_with_tags_content.attributes.merge(
+        'text' =>  "{{tag(11)}} {{tag(14 15)}}"
+      )
 
-    @issue_with_tags.reload
-    assert_equal 2, @issue_with_tags.taggings.size
-    assert_equal [@another_project_context], @issue_with_tags.taggings.map(&:context).uniq
+      page_attrs = @wiki_page_with_tags.attributes
+
+      get_via_redirect(edit_page_path)
+      assert_response :success
+      put_via_redirect(page_path, :wiki_page => page_attrs, :content => page_content)
+      assert_response :success
+      get_via_redirect(page_path)
+      assert_response :success
+
+      new_page = WikiPage.find_by_title("newpage")
+      assert_equal 2, new_page.taggings.size
+    end
+
+    def test_should_update_inline_wiki_page_tags
+      Setting.plugin_redmine_tagging[:wiki_pages_inline] = "1"
+
+      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
+      page_path = project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
+
+      page_content = @wiki_page_with_tags_content.attributes.merge(
+        'text' =>  "{{tag(11)}} {{tag(14 15)}}"
+      )
+
+      page_attrs = @wiki_page_with_tags.attributes
+
+      get_via_redirect(edit_page_path)
+      assert_response :success
+      put_via_redirect(page_path, :wiki_page => page_attrs, :content => page_content)
+      assert_response :success
+      get_via_redirect(page_path)
+      assert_response :success
+
+      @wiki_page_with_tags.reload
+      assert_equal 2, @wiki_page_with_tags.taggings.size
+    end
   end
 end
