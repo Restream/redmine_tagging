@@ -30,7 +30,7 @@ module TaggingPlugin
           })
 
           result = <<-TAGS
-            #{javascript_include_tag 'jquery-1.4.2.min.js', :plugin => 'redmine_tagging'}
+            #{javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'}
             <script type="text/javascript">
               var $j = jQuery.noConflict();
               $j(function() {
@@ -84,8 +84,8 @@ module TaggingPlugin
         tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
 
         tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
-        tags += javascript_include_tag 'jquery-1.4.2.min.js', :plugin => 'redmine_tagging'
-        tags += javascript_include_tag 'tag.js', :plugin => 'redmine_tagging'
+        tags += javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'
+        tags += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
 
         ac = ActsAsTaggableOn::Tag.find(:all,
             :conditions => ["id in (select tag_id from taggings
@@ -176,8 +176,8 @@ module TaggingPlugin
               where taggable_type in ('WikiPage', 'Issue') and context = ?)", tag_context]).collect {|tag| tag.name}
           ac = ac.collect{|tag| "'#{escape_javascript(tag.gsub(/^#/, ''))}'"}.join(', ')
 
-          tags += javascript_include_tag 'jquery-1.4.2.min.js', :plugin => 'redmine_tagging'
-          tags += javascript_include_tag 'tag.js', :plugin => 'redmine_tagging'
+          tags += javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'
+          tags += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
 
           tags += <<-generatedscript
             <script type="text/javascript">
