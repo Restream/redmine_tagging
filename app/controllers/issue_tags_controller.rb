@@ -13,6 +13,7 @@ class IssueTagsController < ApplicationController
     tag.taggings.find_each(:conditions => ['context=?', context]) do |tagging|
       if tagging.taggable_type = "Issue"
         affected_issue = Issue.find(tagging.taggable_id)
+        affected_issue.init_journal(User.current)
         issue_tags = affected_issue.tag_list_on(context)
         affected_issue.tags_to_update = issue_tags.select { |t| t != tag.name }
         affected_issue.save
@@ -21,7 +22,9 @@ class IssueTagsController < ApplicationController
       end
     end
 
-    tag.destroy unless tag.taggings.any?
+    if tag.taggings.empty?
+      tag.destroy
+    end
 
     flash[:notice] = l(:notice_successful_detached)
     redirect_to :controller => 'projects', :action => 'settings', :tab => 'tags', :id => @project
