@@ -108,7 +108,7 @@ module TaggingPlugin
         return unless context[:params] && context[:params]['issue']
 
         tags = context[:params]['issue']['tags'].to_s
-        return unless tags.present?
+
         issue = context[:issue]
         tags = TagsHelper.from_string(tags)
         tag_context = ContextHelper.context_for(issue.project)
