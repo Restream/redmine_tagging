@@ -162,7 +162,9 @@ module TaggingPlugin
           tags = "<h3>#{l(:field_tags)}:</h3><p>#{tags}</p>" if tags
         end
 
-        if request.parameters['action'] == 'edit'
+        action = request.parameters['action']
+        
+        if action == 'edit' || (!page && action == 'show')
           if page
             tags = TagsHelper.to_string(page.tag_list_on(tag_context))
           else
