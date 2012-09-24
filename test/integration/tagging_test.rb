@@ -16,6 +16,9 @@ class TaggingTest < ActionController::IntegrationTest
     @project_with_wiki_tags = @wiki_page_with_tags.project
 
     @another_project_context = TaggingPlugin::ContextHelper.context_for(@another_project)
+    @project_with_tags_context = TaggingPlugin::ContextHelper.context_for(@project_with_tags)
+
+    @project_with_wiki_tags_context = TaggingPlugin::ContextHelper.context_for(@project_with_wiki_tags)
   end
 
   context "issue" do
@@ -34,6 +37,7 @@ class TaggingTest < ActionController::IntegrationTest
 
       new_issue = Issue.find_by_subject("new_issue")
       assert_equal 3, new_issue.taggings.size
+      assert_equal [@project_with_tags_context], new_issue.taggings.map(&:context).uniq
     end
 
     def test_should_update_issue_tags_from_input
@@ -72,6 +76,7 @@ class TaggingTest < ActionController::IntegrationTest
 
       new_issue = Issue.find_by_subject("new_issue")
       assert_equal 3, new_issue.taggings.size
+      assert_equal [@project_with_tags_context], new_issue.taggings.map(&:context).uniq
     end
 
     def test_should_update_inline_issue_tags
@@ -116,6 +121,7 @@ class TaggingTest < ActionController::IntegrationTest
 
       new_page = WikiPage.find_by_title("newpage")
       assert_equal 3, new_page.taggings.size
+      assert_equal [@project_with_wiki_tags_context], new_page.taggings.map(&:context).uniq
     end
 
     def test_should_update_wiki_page_tags_from_input
@@ -136,6 +142,7 @@ class TaggingTest < ActionController::IntegrationTest
 
       @wiki_page_with_tags.reload
       assert_equal 3, @wiki_page_with_tags.taggings.size
+      assert_equal [@project_with_wiki_tags_context], @wiki_page_with_tags.taggings.map(&:context).uniq
     end
 
     def test_should_create_inline_wiki_page_tags
@@ -159,6 +166,7 @@ class TaggingTest < ActionController::IntegrationTest
 
       new_page = WikiPage.find_by_title("newpage")
       assert_equal 2, new_page.taggings.size
+      assert_equal [@project_with_wiki_tags_context], new_page.taggings.map(&:context).uniq
     end
 
     def test_should_update_inline_wiki_page_tags
@@ -182,6 +190,7 @@ class TaggingTest < ActionController::IntegrationTest
 
       @wiki_page_with_tags.reload
       assert_equal 2, @wiki_page_with_tags.taggings.size
+      assert_equal [@project_with_wiki_tags_context], @wiki_page_with_tags.taggings.map(&:context).uniq
     end
   end
 end
