@@ -108,23 +108,23 @@ module TaggingPlugin
         return unless context[:params] && context[:params]['issue']
 
         tags = context[:params]['issue']['tags'].to_s
-
         issue = context[:issue]
-        tags = TagsHelper.from_string(tags)
-        
-        if issue.project_id_changed?
-          tag_context = ContextHelper.context_for(Project.find(issue.project_id_was))
-        else
-          tag_context = ContextHelper.context_for(issue.project)
-        end
 
         if context[:params]['append_tags']
+
+          if issue.project_id_changed?
+            tag_context = ContextHelper.context_for(Project.find(issue.project_id_was))
+          else
+            tag_context = ContextHelper.context_for(issue.project)
+          end
+
           oldtags = issue.tags_on(tag_context)
-          unless oldtags.empty?
-            tags += ', ' + oldtags.map(&:name).join(', ')
+          if oldtags.present?
+            tags += ' ' + TagsHelper.to_string(oldtags.map(&:name))
           end
         end
 
+        tags = TagsHelper.from_string(tags)
         issue.tags_to_update = tags
       end
 
