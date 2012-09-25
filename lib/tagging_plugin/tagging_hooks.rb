@@ -111,7 +111,12 @@ module TaggingPlugin
 
         issue = context[:issue]
         tags = TagsHelper.from_string(tags)
-        tag_context = ContextHelper.context_for(issue.project)
+        
+        if issue.project_id_changed?
+          tag_context = ContextHelper.context_for(Project.find(issue.project_id_was))
+        else
+          tag_context = ContextHelper.context_for(issue.project)
+        end
 
         if context[:params]['append_tags']
           oldtags = issue.tags_on(tag_context)
