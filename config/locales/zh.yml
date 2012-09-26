@@ -1,0 +1,18 @@
+# Simplified Chinese strings go here for Rails i18n
+# Author: Steven.W
+# Based on file: en.yml
+
+zh:
+  field_tags: "标签"
+  tagging_wiki_pages_inline: "在WIKI页中，内嵌标签编辑"
+  tagging_issues_inline: "在问题中，内嵌标签编辑"
+  tagging_sidebar_tagcloud: "在问题侧边栏内显示标签云"
+  tagging_dynamic_font_size: "根据标签的使用情况，自动调整标签云中的标签字体大小"
+  notice_successful_detached: "标签已拆分"
+  tagging_tab_label: "标签"
+  label_tagname: "标签名称"
+  field_tag: "标签主题"
+
+  tags: "标签"
+  append_tags: "追加标签，而非重写标签"
+  detach: "拆分"
