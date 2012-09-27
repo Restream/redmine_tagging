@@ -48,7 +48,11 @@ Redmine::Plugin.register :redmine_tagging do
 
       if project # this may be an attempt to render tag cloud when deleting wiki page
         if !@controller.is_a?(Mailer)
-          @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
+          if obj.is_a?(WikiContent)
+            @controller.send(:render_to_string, { :partial => 'tagging/tagcloud_search', :locals => {:project => project} })
+          else
+            @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
+          end
         end
       end
     end
@@ -85,9 +89,15 @@ Redmine::Plugin.register :redmine_tagging do
         end
 
         taglinks = tags.collect do |tag|
-          search_url = {:controller => "search", :action => "index", :id => project, :q => tag}
+          search_url = {
+            :controller => "search",
+            :action => "index",
+            :id => project,
+            :q => "\"#{tag}\""
+          }
+
           search_url.merge!(obj.is_a?(WikiPage) ? { :wiki_pages => true, :issues => false } : { :wiki_pages => false, :issues => true })
-          link_to("#{tag}", search_url)
+          link_to(tag, search_url)
         end.join('&nbsp;')
 
         "<div class='tags'>#{taglinks}</div>"
