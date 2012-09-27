@@ -116,7 +116,7 @@ module TaggingPlugin
         page = project.wiki.find_page(request.parameters['page'])
         return '' unless page
 
-        tag_context = ContextHelper.context_for(issue.project)
+        tag_context = ContextHelper.context_for(project)
         tags = ''
 
         if request.parameters['action'] == 'index'
@@ -215,8 +215,9 @@ module TaggingPlugin
       end
 
       def view_reports_issue_report_split_content_right(context = {})
+        project_context = ContextHelper.context_for(context[:project])
         @tags = ActsAsTaggableOn::Tagging \
-          .find_all_by_context(ContextHelper.context_for(context[:project])) \
+          .find_all_by_context(project_context) \
           .map(&:tag).uniq
         @tags_by_status = IssueTag.by_issue_status(context[:project])
         report = "<h3>"

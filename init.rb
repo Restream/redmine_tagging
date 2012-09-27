@@ -2,8 +2,8 @@ require 'redmine'
 require 'dispatcher'
 
 Dispatcher.to_prepare do
-  require_dependency 'tagging_patches'
-  require_dependency 'tagging_query_patch'
+  require_dependency 'tagging_plugin/tagging_patches'
+  require_dependency 'tagging_plugin/tagging_query_patch'
 
   if !Issue.searchable_options[:include].include? :issue_tags
     Issue.searchable_options[:columns] << "#{IssueTag.table_name}.tag"
@@ -25,7 +25,7 @@ Dispatcher.to_prepare do
   end
 end
 
-require_dependency 'tagging_hooks'
+require_dependency 'tagging_plugin/tagging_hooks'
 
 Redmine::Plugin.register :redmine_tagging do
   name 'Redmine Tagging plugin'
@@ -46,13 +46,13 @@ Redmine::Plugin.register :redmine_tagging do
         project = obj.project
       end
 
-      if !project.nil? # this may be an attempt to render tag cloud when deleting wiki page
-        @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
+      if project # this may be an attempt to render tag cloud when deleting wiki page
+        if !@controller.is_a?(Mailer)
+          @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
+        end
       end
     end
   end
-
-  require_dependency 'context_helper'
 
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tag"
@@ -76,7 +76,7 @@ Redmine::Plugin.register :redmine_tagging do
           project = obj.project
         end
 
-        context = context_for(project)
+        context = TaggingPlugin::ContextHelper.context_for(project)
         # only save if there are differences
         if obj.tag_list_on(context).sort.join(',') != tags.join(',')
           obj.set_tag_list_on(context, tags.join(', '))
@@ -85,7 +85,7 @@ Redmine::Plugin.register :redmine_tagging do
 
         taglinks = tags.collect{|tag|
           search_url = {:controller => "search", :action => "index", :id => project, :q => tag}
-          search_url.merge!(obj.is_a?(WikiContent) ? { :wiki_pages => true, :issues => false } : { :wiki_pages => false, :issues => true })
+          search_url.merge!(obj.is_a?(WikiPage) ? { :wiki_pages => true, :issues => false } : { :wiki_pages => false, :issues => true })
           link_to("#{tag}", search_url)
         }.join('&nbsp;')
         "<div class='tags'>#{taglinks}</div>"

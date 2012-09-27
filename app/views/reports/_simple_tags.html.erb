@@ -11,25 +11,32 @@
 <tbody>
 <% for tag in rows %>
 <tr class="<%= cycle("odd", "even") %>">
-  <td><%= render :partial => "tagging/taglink", :locals => {:tag => tag.name, :project => @project} %></td>
-  <td align="center"><%= render :partial => "tagging/taglink", :locals => {
-    :tag => tag.name,
-    :project => @project,
-    :name => aggregate(data, { field_name => tag.id, "closed" => 0 }),
-    :status => "o"
-  } %></td>
-  <td align="center"><%= render :partial => "tagging/taglink", :locals => {
-    :tag => tag.name,
-    :project => @project,
-    :name => aggregate(data, { field_name => tag.id, "closed" => 1 }),
-    :status => "c"
-  } %></td>
-  <td align="center"><%= render :partial => "tagging/taglink", :locals => {
-    :tag => tag.name,
-    :project => @project,
-    :name => aggregate(data, { field_name => tag.id }),
-    :status => "*"
-  } %></td>
+  <td>
+    <%= link_to_project_tag_filter(@project, tag) %>
+  </td>
+  <td align="center">
+    <%= link_to_project_tag_filter(
+      @project,
+      tag,
+      :status => "o",
+      :title => aggregate(data, { field_name => tag.id, "closed" => 0 }))
+    %>
+  </td>
+  <td align="center">
+    <%= link_to_project_tag_filter(
+      @project,
+      tag,
+      :status => "c",
+      :title => aggregate(data, { field_name => tag.id, "closed" => 1 }))
+    %>
+  </td>
+  <td align="center">
+    <%= link_to_project_tag_filter(
+      @project,
+      tag,
+      :title => aggregate(data, { field_name => tag.id }))
+    %>
+  </td>
 </tr>
 <% end %>
 </tbody>

@@ -28,7 +28,7 @@
             style = {}
           end
         %>
-        <%= render :partial => "tagging/taglink", :locals => {:tag => tag, :project => @project} %>
+        <%= link_to_project_tag_filter(@project, tag) %>
       <% end %>
     </div>
 
@@ -63,7 +63,7 @@
             style = {}
           end
         %>
-        <%= render :partial => "tagging/taglink", :locals => {:tag => tag} %>
+        <%= link_to_project_tag_filter(nil, tag) %>
       <% end %>
     </div>
   <% end %>
