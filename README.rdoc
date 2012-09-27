@@ -15,9 +15,6 @@ Spaces _or_ commas will act as a separator when editing tags
 wiki sidebar. The tagcloud will automatically be rendered in the
 issues list sidebar.
 
-This plugin needs acts-as-taggable-on
-The plugin also needs rails_sql_views 0.7.0
-
 = Installation
 
 Installation is performed with:
