@@ -4,7 +4,7 @@ class TaggingController < ApplicationController
   before_filter :find_optional_project, :authorize
 
   def index
-    context = @project.identifier.gsub '-', '_'
+    context = TaggingPlugin::ContextHelper.context_for(@project)
 
     @tags = params[:tags].split
 

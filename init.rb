@@ -52,6 +52,8 @@ Redmine::Plugin.register :redmine_tagging do
     end
   end
 
+  require_dependency 'context_helper'
+
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tag"
     macro :tag do |obj, args|
@@ -73,8 +75,8 @@ Redmine::Plugin.register :redmine_tagging do
         else
           project = obj.project
         end
-        context = project.identifier.gsub('-', '_')
 
+        context = context_for(project)
         # only save if there are differences
         if obj.tag_list_on(context).sort.join(',') != tags.join(',')
           obj.set_tag_list_on(context, tags.join(', '))
