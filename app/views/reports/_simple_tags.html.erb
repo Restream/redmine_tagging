@@ -34,6 +34,7 @@
     <%= link_to_project_tag_filter(
       @project,
       tag.name,
+      :status => "*",
       :title => aggregate(data, { field_name => tag.id }))
     %>
   </td>

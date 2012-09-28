@@ -1,7 +1,7 @@
 module ApplicationHelper
   def link_to_project_tag_filter(project, tag, options = {}, html_options = {})
     options.reverse_merge!({
-      :status => '*',
+      :status => 'o',
       :title => tag
     })
 
