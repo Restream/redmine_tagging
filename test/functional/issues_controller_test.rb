@@ -22,7 +22,7 @@ class IssuesControllerTest < ActionController::TestCase
 
     another_project_context = TaggingPlugin::ContextHelper.context_for(@another_project)
     tags = @issue_with_tags.tags_on(another_project_context)      
-    assert_equal tags.map(&:name).sort, ['#1', '#2', '#3', '#4', '#5', '#777', '#cool/tag']
+    assert_equal ['#1', '#2', '#3', '#4', '#5', '#777', '#cool/tag'], tags.map(&:name).sort
   end
 
   def test_bulk_update_without_project_change_should_success
@@ -34,6 +34,17 @@ class IssuesControllerTest < ActionController::TestCase
 
     project_context = TaggingPlugin::ContextHelper.context_for(@project_with_tags)
     tags = @issue_with_tags.tags_on(project_context)      
-    assert_equal tags.map(&:name).sort, ['#1', '#2', '#3', '#4', '#5', '#777', '#cool/tag']
+    assert_equal ['#1', '#2', '#3', '#4', '#5', '#777', '#cool/tag'], tags.map(&:name).sort
+  end
+
+  def test_bulk_update_without_tags_field_should_not_drop_tags
+    put :bulk_update, { :ids => Issue.all.map(&:id), :issue => { :status_id => 1 }}
+    assert_response :redirect
+
+    @issue_with_tags.reload
+
+    project_context = TaggingPlugin::ContextHelper.context_for(@project_with_tags)
+    tags = @issue_with_tags.tags_on(project_context)
+    assert_equal ['#1', '#2', '#3', '#4', '#5'], tags.map(&:name).sort
   end
 end

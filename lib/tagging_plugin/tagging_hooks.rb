@@ -106,12 +106,12 @@ module TaggingPlugin
       def controller_issues_bulk_edit_before_save(context = {})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
         return unless context[:params] && context[:params]['issue']
+        return unless context[:params]['issue']['tags']
 
         tags = context[:params]['issue']['tags'].to_s
         issue = context[:issue]
 
         if context[:params]['append_tags']
-
           if issue.project_id_changed?
             tag_context = ContextHelper.context_for(Project.find(issue.project_id_was))
           else
