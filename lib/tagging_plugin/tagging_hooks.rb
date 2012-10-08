@@ -32,10 +32,10 @@ module TaggingPlugin
           result = <<-TAGS
             #{javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'}
             <script type="text/javascript">
-              var $j = jQuery.noConflict();
+              var $j = jQuery.noConflict()
               $j(function() {
                 $j('#sidebar').append("#{escape_javascript(tag_cloud)}")
-              });
+              })
             </script>
           TAGS
         else
@@ -93,10 +93,10 @@ module TaggingPlugin
         ac = ac.collect{|tag| "'#{escape_javascript(tag.gsub(/^#/, ''))}'"}.join(', ')
         tags += <<-generatedscript
           <script type="text/javascript">
-            var $j = jQuery.noConflict();
+            var $j = jQuery.noConflict()
             $j(document).ready(function() {
-              $j('#issue_tags').tagSuggest({ tags: [#{ac}] });
-            });
+              $j('#issue_tags').tagSuggest({ tags: [#{ac}] })
+            })
           </script>
         generatedscript
 
