@@ -1,0 +1,9 @@
+<a id="cloud_trigger"><%= t(:tags_in_project) %></a>
+<span id="cloud_content"> &mdash;
+  <%
+    tag_cloud_in_project(@project) do |tag, factor|
+      options = {:style => "font-size: #{10 * factor + 9}pt" }
+  %>
+      <%= link_to_project_tag_filter(@project, tag, {}, options) %>
+  <% end %>
+</span>
