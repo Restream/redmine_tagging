@@ -72,7 +72,7 @@ if (!Array.prototype.indexOf) {
   function update_selected_tags(selected_tags, tag_cloud) {
     tag_cloud.children().each(function(index, tag_child) {
       var tag_value = $(tag_child).attr("data-tag")
-      if(selected_tags.indexOf(tag_value) == -1)
+      if(selected_tags.indexOf(tag_value.toLowerCase()) == -1)
         $(tag_child).removeClass("selected")
       else {
         $(tag_child).addClass("selected")
@@ -82,8 +82,7 @@ if (!Array.prototype.indexOf) {
 
   $.fn.toggleTagFor = function(tag_name, tag_container) {
     var content_tags = tags_to_array(tag_container.attr("value")) 
-
-    var this_tag_index = content_tags.indexOf(tag_name)
+    var this_tag_index = content_tags.indexOf(tag_name.toLowerCase())
 
     if(this_tag_index == -1) {
       content_tags.push(tag_name)
@@ -96,6 +95,11 @@ if (!Array.prototype.indexOf) {
 
   function tags_to_array(tags) {
     dirty_items = tags.split(/[,#\s]+/)
+
+    dirty_items = $.map(dirty_items, function(val, i){
+      return val.toLowerCase()
+    })
+
     return $.grep(dirty_items, function(val, i){
       return (val.length > 0)
     })
