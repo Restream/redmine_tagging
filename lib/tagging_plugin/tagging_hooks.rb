@@ -1,38 +1,13 @@
 module TaggingPlugin
   module Hooks
     class LayoutHook < Redmine::Hook::ViewListener
-      def view_issues_new_top(context={})
-        return '' if Setting.plugin_redmine_tagging[:sidebar_tagcloud] != "1"
-
-        cloud = context[:controller].send(:render_to_string, {
-            :partial => 'tagging/issue_tagcloud',
-            :locals => context
-          })
-
-        result = <<-TAGS
-          #{javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'}
-          #{javascript_include_tag 'toggle_visibility', :plugin => 'redmine_tagging'}
-          <script type="text/javascript">
-            var $j = jQuery.noConflict()
-            $j(function() {
-              var tags_container = $j('#issue_tags').parent()
-              var cloud = $j("<div>#{escape_javascript(cloud)}</div>")
-              $j(tags_container).append(cloud)
-              $j('#cloud_content').toggleVisibilityVia($j('#cloud_trigger'))
-            })
-          </script>
-        TAGS
-
-        return result
-      end
-
       def view_issues_sidebar_planning_bottom(context={})
         return '' if Setting.plugin_redmine_tagging[:sidebar_tagcloud] != "1"
 
         return context[:controller].send(:render_to_string, {
             :partial => 'tagging/tagcloud',
             :locals => context
-          })
+        })
       end
 
       def view_wiki_sidebar_bottom(context={})
@@ -41,11 +16,18 @@ module TaggingPlugin
         return context[:controller].send(:render_to_string, {
             :partial => 'tagging/tagcloud_search',
             :locals => context
-          })
+        })
       end
 
       def view_layouts_base_html_head(context={})
+        tagging_stylesheet = stylesheet_link_tag 'tagging', :plugin => 'redmine_tagging'
 
+        unless ((Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1" &&
+                 context[:controller].is_a?(WikiController)) ||
+                (context[:controller].is_a?(IssuesController) && 
+                 context[:controller].action_name == 'bulk_edit'))
+          return tagging_stylesheet
+        end
 
         if Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1"
           tag_cloud = context[:controller].send(:render_to_string, {
@@ -58,34 +40,18 @@ module TaggingPlugin
           sidebar_tags = ''
         end
 
-        result = <<-TAGS
+        <<-TAGS
+          #{tagging_stylesheet}
           #{javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'}
-          #{javascript_include_tag 'toggle_visibility', :plugin => 'redmine_tagging'}
+          #{javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'}
           <script type="text/javascript">
             var $j = jQuery.noConflict()
             $j(function() {
               #{sidebar_tags}
-              $j('#cloud_content').toggleVisibilityVia($j('#cloud_trigger'))
+              $j('#cloud_content').toggleCloudViaFor($j('#cloud_trigger'), $j('#issue_tags'))
             })
           </script>
         TAGS
-
-        <<-TAGCLOUD
-          #{result}
-          <style>
-            span.tagMatches {
-              margin-left: 10px;
-            }
-
-            span.tagMatches span {
-              padding: 2px;
-              margin-right: 4px;
-              background-color: #0000AB;
-              color: #fff;
-              cursor: pointer;
-            }
-          </style>
-        TAGCLOUD
       end
 
       def view_issues_show_details_bottom(context={})
@@ -114,6 +80,12 @@ module TaggingPlugin
         tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
         tags += javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'
         tags += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
+        tags += javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'
+
+        cloud = context[:controller].send(:render_to_string, {
+            :partial => 'tagging/issue_tagcloud',
+            :locals => context
+        })
 
         ac = ActsAsTaggableOn::Tag.find(:all,
             :conditions => ["id in (select tag_id from taggings
@@ -124,6 +96,11 @@ module TaggingPlugin
             var $j = jQuery.noConflict()
             $j(document).ready(function() {
               $j('#issue_tags').tagSuggest({ tags: [#{ac}] })
+
+              var tags_container = $j('#issue_tags').parent()
+              var cloud = $j("<div>#{escape_javascript(cloud)}</div>")
+              $j(tags_container).append(cloud)
+              $j('#cloud_content').toggleCloudViaFor($j('#cloud_trigger'), $j('#issue_tags'))
             })
           </script>
         generatedscript
@@ -260,7 +237,6 @@ module TaggingPlugin
         report += "<br/>"
         return report
       end
-
     end
   end
 end
