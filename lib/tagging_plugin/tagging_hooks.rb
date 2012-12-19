@@ -30,11 +30,9 @@ module TaggingPlugin
           })
 
           result = <<-TAGS
-            #{javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'}
             <script type="text/javascript">
-              var $j = jQuery.noConflict()
-              $j(function() {
-                $j('#sidebar').append("#{escape_javascript(tag_cloud)}")
+              $(function() {
+                $('#sidebar').append("#{escape_javascript(tag_cloud)}")
               })
             </script>
           TAGS
@@ -93,9 +91,8 @@ module TaggingPlugin
         ac = ac.collect{|tag| "'#{escape_javascript(tag.gsub(/^#/, ''))}'"}.join(', ')
         tags += <<-generatedscript
           <script type="text/javascript">
-            var $j = jQuery.noConflict()
-            $j(document).ready(function() {
-              $j('#issue_tags').tagSuggest({ tags: [#{ac}] })
+            $(document).ready(function() {
+              $('#issue_tags').tagSuggest({ tags: [#{ac}] })
             })
           </script>
         generatedscript
@@ -188,10 +185,9 @@ module TaggingPlugin
 
           tags += <<-generatedscript
             <script type="text/javascript">
-              var $j = jQuery.noConflict()
-              $j(document).ready(function() {
-                $j('#tagging_wiki_edit_block').insertAfter($j("#content_text"))
-                $j('#wiki_page_tags').tagSuggest({ tags: [#{ac}] })
+              $(document).ready(function() {
+                $('#tagging_wiki_edit_block').insertAfter($("#content_text"))
+                $('#wiki_page_tags').tagSuggest({ tags: [#{ac}] })
               })
             </script>
           generatedscript

@@ -10,7 +10,7 @@ class IssueTagsController < ApplicationController
 
     context = TaggingPlugin::ContextHelper.context_for(@project)
 
-    tag.taggings.find_each(:conditions => ['context=?', context]) do |tagging|
+    tag.taggings.where(:context => context).find_each do |tagging|
       if tagging.taggable_type = "Issue"
         affected_issue = Issue.find(tagging.taggable_id)
         affected_issue.init_journal(User.current)

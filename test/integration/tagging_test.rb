@@ -1,10 +1,13 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class TaggingTest < ActionController::IntegrationTest
-  fixtures :all
+  fixtures :projects, :issues, :users, :trackers, :issue_statuses
 
   def setup
+    Mailer.stubs(:deliver_mail).returns(true)
+
     log_user("admin", "admin")
+    User.any_instance.stubs(:allowed_to?).returns(true)
 
     @some_tags = "#1, #2, #3,#4,#5"
     @issue_with_tags = setup_issue_with_tags(@some_tags)
@@ -12,7 +15,7 @@ class TaggingTest < ActionController::IntegrationTest
     @wiki_page_with_tags_content = @wiki_page_with_tags.content
 
     @project_with_tags = @issue_with_tags.project
-    @another_project = Project.find(:first, :conditions => ["id != ?", @project_with_tags.id])
+    @another_project = Project.generate!
     @project_with_wiki_tags = @wiki_page_with_tags.project
 
     @another_project_context = TaggingPlugin::ContextHelper.context_for(@another_project)
@@ -25,10 +28,12 @@ class TaggingTest < ActionController::IntegrationTest
     def test_should_create_issue_tags_from_input
       Setting.plugin_redmine_tagging[:issues_inline] = "0"
 
-      @new_issue_attrs = @issue_with_tags.attributes.merge({
+      @new_issue_attrs = {
+        "project_id" => @project_with_tags.id,
+        "priority_id" => @issue_with_tags.priority_id,
         "subject" => "new_issue",
         "tags" => "10 11 12"
-      })
+      }
 
       get_via_redirect(new_project_issue_path(@project_with_tags))
       assert_response :success
@@ -44,7 +49,7 @@ class TaggingTest < ActionController::IntegrationTest
       Setting.plugin_redmine_tagging[:issues_inline] = "0"
 
       issue_attrs = @issue_with_tags.attributes
-
+      
       issue_attrs['project_id'] = @another_project.id
       issue_attrs['tracker'] = @another_project.trackers.first
       issue_attrs['tags'] = "10 11 12"
@@ -64,10 +69,12 @@ class TaggingTest < ActionController::IntegrationTest
     def test_should_create_inline_issue_tags
       Setting.plugin_redmine_tagging[:issues_inline] = "1"
 
-      @new_issue_attrs = @issue_with_tags.attributes.merge({
+      @new_issue_attrs = {
+        "project_id" => @project_with_tags.id,
+        "priority_id" => @issue_with_tags.priority_id,
         "subject" => "new_issue",
         "description" => "{{tag(10 11 12)}}"
-      })
+      }
 
       get_via_redirect(new_project_issue_path(@project_with_tags))
       assert_response :success
@@ -96,7 +103,7 @@ class TaggingTest < ActionController::IntegrationTest
       assert_response :success
 
       @issue_with_tags.reload
-      assert_equal 2, @issue_with_tags.taggings.size
+      assert_equal 2, @issue_with_tags.taggings.count
       assert_equal [@another_project_context], @issue_with_tags.taggings.map(&:context).uniq
     end
   end
@@ -119,7 +126,7 @@ class TaggingTest < ActionController::IntegrationTest
       get_via_redirect(page_path)
       assert_response :success
 
-      new_page = WikiPage.find_by_title("newpage")
+      new_page = WikiPage.find_by_title("Newpage")
       assert_equal 3, new_page.taggings.size
       assert_equal [@project_with_wiki_tags_context], new_page.taggings.map(&:context).uniq
     end
@@ -164,7 +171,7 @@ class TaggingTest < ActionController::IntegrationTest
       get_via_redirect(page_path)
       assert_response :success
 
-      new_page = WikiPage.find_by_title("newpage")
+      new_page = WikiPage.find_by_title("Newpage")
       assert_equal 2, new_page.taggings.size
       assert_equal [@project_with_wiki_tags_context], new_page.taggings.map(&:context).uniq
     end

@@ -27,7 +27,7 @@ You need to set up database for acts-as-taggable-on:
 1a) for Rails 2 (which Redmine currently uses):
   $ env RAILS_ENV=production script/generate acts_as_taggable_on_migration
 1b) for Rails 3:
-  $ rails generation acts_as_taggable_on:migration
+  $ rails generate acts_as_taggable_on:migration
 2)
   $ rake db:migrate RAILS_ENV=production
   $ rake db:migrate_plugins RAILS_ENV=production

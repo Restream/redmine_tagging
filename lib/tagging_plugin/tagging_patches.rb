@@ -61,6 +61,7 @@ module TaggingPlugin
 
         before_save :update_tags
         acts_as_taggable
+
         after_save :cleanup_tags
 
         has_many :issue_tags
@@ -98,6 +99,8 @@ module TaggingPlugin
 
           # Fix context if project changed
           if project_id_changed? && !new_record?
+            @new_project_id = project_id
+
             taggings.update_all(:context => project_context)
           end
 
@@ -109,14 +112,22 @@ module TaggingPlugin
         end
 
         def cleanup_tags
-          if project_id_changed?
+          if @new_project_id
             context = ContextHelper.context_for(project)
-            condition = ["context != ? AND taggable_id = ? AND taggable_type= ?", context, id, "Issue"]
-            ActsAsTaggableOn::Tagging.delete_all(condition)
+            ActsAsTaggableOn::Tagging.where("
+              context!=? AND taggable_id=? AND taggable_type=?",
+              context, id, "Issue").delete_all
           end
-
           true
         end
+    end
+  end
+
+  module TaggingHelperPatch
+    def self.included(base)
+      base.class_eval do
+        helper :tagging
+      end
     end
   end
 
@@ -146,6 +157,10 @@ end
 Issue.send(:include, TaggingPlugin::IssuePatch) unless Issue.included_modules.include? TaggingPlugin::IssuePatch
 
 WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
+
+[IssuesController, ReportsController, WikiController, ProjectsController].each do |controller|
+  controller.send(:include, TaggingPlugin::TaggingHelperPatch) unless controller.include? TaggingPlugin::TaggingHelperPatch
+end
 
 WikiController.send(:include, TaggingPlugin::WikiControllerPatch) unless WikiController.included_modules.include? TaggingPlugin::WikiControllerPatch
 

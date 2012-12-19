@@ -1,4 +1,6 @@
 class WikiPageTag < ActiveRecord::Base
+  set_primary_key :id
+
   belongs_to :wiki_page
 
   def readonly?

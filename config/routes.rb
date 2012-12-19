@@ -1,3 +1,3 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :issue_tags, :only => [:destroy]
+RedmineApp::Application.routes.draw do
+  resources :issue_tags, :only => [:destroy]
 end

@@ -11,7 +11,8 @@ module TaggingPlugin
         alias_method_chain :available_filters, :tags
         alias_method_chain :sql_for_field, :tags
 
-        add_available_column(QueryColumn.new(:issue_tags, :caption => :tags))
+        tag_query_column = QueryColumn.new(:issue_tags, :caption => :field_tags)
+        add_available_column(tag_query_column)
       end
 
     end
@@ -34,6 +35,7 @@ module TaggingPlugin
           "tags" => {
             :type => :list_optional,
             :values => tags,
+            :name => l(:field_tags),
             :order => 20
           }
         }

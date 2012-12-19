@@ -1,13 +1,26 @@
 # Load the normal Rails helper
-require File.expand_path(File.dirname(__FILE__) + '/../../../../test/test_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../../test/test_helper')
+
+require 'test/unit/util/backtracefilter'
+
+module Test::Unit::Util::BacktraceFilter
+  def filter_backtrace(backtrace, prefix=nil)
+    backtrace
+  end
+end
 
 def setup_issue_with_tags(test_tags)
-  public_project = Project.first(["is_public=?", true])
-  some_issue = public_project.issues.first
+  public_project = Project.generate!(:is_public => true)
+  tracker = Tracker.generate!
+  priority = IssuePriority.new(:name => "test_priority#{public_project.id}")
+  priority.save!
+  public_project.trackers << tracker
 
-  some_issue.tags_to_update = test_tags
-  some_issue.save!
-  some_issue
+  issue = Issue.generate!(:project_id => public_project.id, :tracker => tracker, :priority => priority)
+
+  issue.tags_to_update = test_tags
+  issue.save!
+  issue
 end
 
 def setup_wiki_page_with_tags(test_tags)

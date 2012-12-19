@@ -1,9 +1,9 @@
 require 'redmine'
-require 'dispatcher'
 
-Dispatcher.to_prepare do
-  require_dependency 'tagging_plugin/tagging_patches'
-  require_dependency 'tagging_plugin/tagging_query_patch'
+ActionDispatch::Callbacks.to_prepare do
+  require 'tagging_plugin/tagging_patches'
+  require 'tagging_plugin/tagging_query_patch'
+  require 'tagging_plugin/api_template_handler_patch'
 
   if !Issue.searchable_options[:include].include? :issue_tags
     Issue.searchable_options[:columns] << "#{IssueTag.table_name}.tag"
@@ -11,15 +11,6 @@ Dispatcher.to_prepare do
   end
 
   if !WikiPage.searchable_options[:include].include? :wiki_page_tags
-    # I now know _way_ to much about activerecord... activerecord
-    # builds an SQL string, _then scans that string_ for tables to use
-    # in its join constructions. I really do hope that's a temporary
-    # workaround. Why it has ever worked is beyond me. Reference:
-    # construct_finder_sql_for_association_limiting in
-    # active_record/associations.rb
-    WikiPage.searchable_options[:columns] = WikiPage.searchable_options[:columns].select{|c| c != 'text'}
-    WikiPage.searchable_options[:columns] << "#{WikiContent.table_name}.text"
-
     WikiPage.searchable_options[:columns] << "#{WikiPageTag.table_name}.tag"
     WikiPage.searchable_options[:include] << :wiki_page_tags
   end
@@ -100,7 +91,7 @@ Redmine::Plugin.register :redmine_tagging do
           link_to(tag, search_url)
         end.join('&nbsp;')
 
-        "<div class='tags'>#{taglinks}</div>"
+        raw("<div class='tags'>#{taglinks}</div>")
       else
         ''
       end
