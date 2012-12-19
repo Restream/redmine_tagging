@@ -52,7 +52,7 @@ if (!Array.prototype.indexOf) {
       e.preventDefault()
     })
 
-    $(this).toggle()
+    tag_cloud.toggle(false)
     show_selected_tags_from(tag_container, tag_cloud)
 
     tag_container.keyup(function(e) {
