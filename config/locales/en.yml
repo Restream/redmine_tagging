@@ -13,3 +13,4 @@ en:
   tags: "Tags"
   append_tags: "Append tags instead of rewrite"
   detach: "Detach"
+  tags_in_project: "Project tags"

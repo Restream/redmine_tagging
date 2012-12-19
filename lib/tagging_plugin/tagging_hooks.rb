@@ -1,64 +1,58 @@
 module TaggingPlugin
   module Hooks
     class LayoutHook < Redmine::Hook::ViewListener
-
-      def view_issues_sidebar_planning_bottom(context={ })
+      def view_issues_sidebar_planning_bottom(context={})
         return '' if Setting.plugin_redmine_tagging[:sidebar_tagcloud] != "1"
 
         return context[:controller].send(:render_to_string, {
             :partial => 'tagging/tagcloud',
             :locals => context
-          })
+        })
       end
 
-      def view_wiki_sidebar_bottom(context={ })
+      def view_wiki_sidebar_bottom(context={})
         return '' if Setting.plugin_redmine_tagging[:sidebar_tagcloud] != "1"
 
         return context[:controller].send(:render_to_string, {
             :partial => 'tagging/tagcloud_search',
             :locals => context
-          })
+        })
       end
 
-      def view_layouts_base_html_head(context = {})
-        if Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1" \
-           && context[:controller].is_a?(WikiController)
+      def view_layouts_base_html_head(context={})
+        tagging_stylesheet = stylesheet_link_tag 'tagging', :plugin => 'redmine_tagging'
 
+        unless ((Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1" &&
+                 context[:controller].is_a?(WikiController)) ||
+                (context[:controller].is_a?(IssuesController) && 
+                 context[:controller].action_name == 'bulk_edit'))
+          return tagging_stylesheet
+        end
+
+        if Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1"
           tag_cloud = context[:controller].send(:render_to_string, {
             :partial => 'tagging/tagcloud_search',
             :locals => context
           })
 
-          result = <<-TAGS
-            <script type="text/javascript">
-              $(function() {
-                $('#sidebar').append("#{escape_javascript(tag_cloud)}")
-              })
-            </script>
-          TAGS
+          sidebar_tags = "$('#sidebar').append(\"#{escape_javascript(tag_cloud)}\")"
         else
-          result = ''
+          sidebar_tags = ''
         end
 
-        <<-TAGCLOUD
-          #{result}
-          <style>
-            span.tagMatches {
-              margin-left: 10px;
-            }
-
-            span.tagMatches span {
-              padding: 2px;
-              margin-right: 4px;
-              background-color: #0000AB;
-              color: #fff;
-              cursor: pointer;
-            }
-          </style>
-        TAGCLOUD
+        <<-TAGS
+          #{tagging_stylesheet}
+          #{javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'}
+          <script type="text/javascript">
+            $(function() {
+              #{sidebar_tags}
+              $('#cloud_content').toggleCloudViaFor($('#cloud_trigger'), $('#issue_tags'))
+            })
+          </script>
+        TAGS
       end
 
-      def view_issues_show_details_bottom(context={ })
+      def view_issues_show_details_bottom(context={})
         return '' if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
         issue = context[:issue]
@@ -72,7 +66,7 @@ module TaggingPlugin
           })
       end
 
-      def view_issues_form_details_bottom(context={ })
+      def view_issues_form_details_bottom(context={})
         return '' if Setting.plugin_redmine_tagging[:issues_inline] == "1"
 
         issue = Issue.visible.find_by_id(context[:issue].id) || context[:issue]
@@ -82,8 +76,13 @@ module TaggingPlugin
         tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
 
         tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
-        tags += javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'
         tags += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
+        tags += javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'
+
+        cloud = context[:controller].send(:render_to_string, {
+            :partial => 'tagging/issue_tagcloud',
+            :locals => context
+        })
 
         ac = ActsAsTaggableOn::Tag.find(:all,
             :conditions => ["id in (select tag_id from taggings
@@ -93,6 +92,10 @@ module TaggingPlugin
           <script type="text/javascript">
             $(document).ready(function() {
               $('#issue_tags').tagSuggest({ tags: [#{ac}] })
+              var tags_container = $('#issue_tags').parent()
+              var cloud = $("<div>#{escape_javascript(cloud)}</div>")
+              $(tags_container).append(cloud)
+              $('#cloud_content').toggleCloudViaFor($('#cloud_trigger'), $('#issue_tags'))
             })
           </script>
         generatedscript
@@ -100,7 +103,7 @@ module TaggingPlugin
         return tags
       end
 
-      def controller_issues_bulk_edit_before_save(context = {})
+      def controller_issues_bulk_edit_before_save(context={})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
         return unless context[:params] && context[:params]['issue']
         return unless context[:params]['issue']['tags']
@@ -125,7 +128,7 @@ module TaggingPlugin
         issue.tags_to_update = tags
       end
 
-      def controller_issues_edit_before_save(context = {})
+      def controller_issues_edit_before_save(context={})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"
         return unless context[:params] && context[:params]['issue']
 
@@ -139,7 +142,7 @@ module TaggingPlugin
       alias_method :controller_issues_new_before_save, :controller_issues_edit_before_save
 
       # wikis have no view hooks
-      def view_layouts_base_content(context = {})
+      def view_layouts_base_content(context={})
         return '' if Setting.plugin_redmine_tagging[:wiki_pages_inline] == "1"
 
         return '' unless context[:controller].is_a?(WikiController)
@@ -196,17 +199,23 @@ module TaggingPlugin
         return tags
       end
 
-      def view_issues_bulk_edit_details_bottom(context = {})
+      def view_issues_bulk_edit_details_bottom(context={})
+
+        cloud = context[:controller].send(:render_to_string, {
+            :partial => 'tagging/issue_tagcloud',
+            :locals => context
+        })
+
         field = "<p>
             <label>#{ l(:field_tags) }</label>
             #{ text_field_tag 'issue[tags]', '', :size => 18 }<br>
             <input type=\"checkbox\" name=\"append_tags\" checked=\"checked\">
             #{ l(:append_tags) }<br>
           </p>"
-        return field
+        return field + "<p>" + cloud + "</p>"
       end
 
-      def view_reports_issue_report_split_content_right(context = {})
+      def view_reports_issue_report_split_content_right(context={})
         project_context = ContextHelper.context_for(context[:project])
         @tags = ActsAsTaggableOn::Tagging \
           .find_all_by_context(project_context) \
@@ -222,7 +231,6 @@ module TaggingPlugin
         report += "<br/>"
         return report
       end
-
     end
   end
 end

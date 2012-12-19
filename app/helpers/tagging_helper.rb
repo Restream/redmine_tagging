@@ -21,6 +21,10 @@ module TaggingHelper
     end
   end
 
+  def tag_without_sharp(tag)
+    tag[1..-1]
+  end
+
   def tag_cloud_in_project(project, &each_tag)
     tags = {}
 
