@@ -31,19 +31,23 @@ Redmine::Plugin.register :redmine_tagging do
     macro :tagcloud do |obj, args|
       args, options = extract_macro_options(args, :parent)
 
-      if obj.is_a? WikiContent
-        project = obj.page.wiki.project
+      return if params[:controller] == "mailer"
+
+      if obj
+        if obj.is_a? WikiContent
+          project = obj.page.wiki.project
+        else
+          project = obj.project
+        end
       else
-        project = obj.project
+        project = Project.visible.where(:identifier => params[:project_id]).first
       end
 
       if project # this may be an attempt to render tag cloud when deleting wiki page
-        if !@controller.is_a?(Mailer)
-          if obj.is_a?(WikiContent)
-            @controller.send(:render_to_string, { :partial => 'tagging/tagcloud_search', :locals => {:project => project} })
-          else
-            @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
-          end
+        if [WikiContent, WikiContent::Version, NilClass].include?(obj.class)
+          render :partial => 'tagging/tagcloud_search', :project => project
+        elsif [Journal, Issue].include?(obj.class)
+          render :partial => 'tagging/tagcloud', :project => project
         end
       end
     end

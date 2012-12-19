@@ -144,9 +144,11 @@ module TaggingPlugin
 
     module InstanceMethods
       def update_with_tags
-        if tags = params[:wiki_page][:tags]
-          tags = TagsHelper.from_string(tags)
-          @page.tags_to_update = tags
+        if params[:wiki_page]
+          if tags = params[:wiki_page][:tags]
+            tags = TagsHelper.from_string(tags)
+            @page.tags_to_update = tags
+          end
         end
         update_without_tags
       end

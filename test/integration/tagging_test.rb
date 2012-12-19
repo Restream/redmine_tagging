@@ -109,6 +109,24 @@ class TaggingTest < ActionController::IntegrationTest
   end
 
   context "wiki_page" do
+    def test_should_generate_wiki_tagcloud
+      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, "newpage")
+      page_path = project_wiki_path(@project_with_wiki_tags, "newpage")
+
+      page_content = @wiki_page_with_tags_content.attributes.merge(
+        'text' =>  "{{tag(11)}} {{tag(14 15)}} {{tagcloud}}"
+      )
+
+      page_attrs = @wiki_page_with_tags.attributes
+
+      get_via_redirect(edit_page_path)
+      assert_response :success
+      put_via_redirect(page_path, :wiki_page => page_attrs, :content => page_content)
+      assert_response :success
+      get_via_redirect(page_path)
+      assert_response :success
+    end
+
     def test_should_create_wiki_page_tags_from_input
       Setting.plugin_redmine_tagging[:wiki_pages_inline] = "0"
 
