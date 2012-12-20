@@ -7,7 +7,7 @@ namespace :redmine do
         puts "Adding inline tags to issues"
 
         Issue.find(:all).each {|issue|
-          tag_context = issue.project.identifier.gsub('-', '_')
+          tag_context = TaggingPlugin::ContextHelper.context_for(issue.project)
           tags = issue.tag_list_on(tag_context).collect {|tag| tag.gsub(/^#/, '') }.sort.join(', ')
 
           next if tags.blank? && issue.description.blank?
@@ -34,7 +34,7 @@ namespace :redmine do
         puts "Adding inline tags to wikis"
 
         WikiContent.find(:all).each {|content|
-          tag_context = content.page.wiki.project.identifier.gsub('-', '_')
+          tag_context = TaggingPlugin::ContextHelper.context_for(content.page.wiki.project)
           tags = content.page.tag_list_on(tag_context).collect {|tag| tag.gsub(/^#/, '') }.sort.join(', ')
 
           next if tags.blank? && content.text.blank?

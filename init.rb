@@ -1,9 +1,9 @@
 require 'redmine'
-require 'dispatcher'
 
-Dispatcher.to_prepare do
-  require_dependency 'tagging_patches'
-  require_dependency 'tagging_query_patch'
+ActionDispatch::Callbacks.to_prepare do
+  require 'tagging_plugin/tagging_patches'
+  require 'tagging_plugin/tagging_query_patch'
+  require 'tagging_plugin/api_template_handler_patch'
 
   if !Issue.searchable_options[:include].include? :issue_tags
     Issue.searchable_options[:columns] << "#{IssueTag.table_name}.tag"
@@ -11,21 +11,12 @@ Dispatcher.to_prepare do
   end
 
   if !WikiPage.searchable_options[:include].include? :wiki_page_tags
-    # I now know _way_ to much about activerecord... activerecord
-    # builds an SQL string, _then scans that string_ for tables to use
-    # in its join constructions. I really do hope that's a temporary
-    # workaround. Why it has ever worked is beyond me. Reference:
-    # construct_finder_sql_for_association_limiting in
-    # active_record/associations.rb
-    WikiPage.searchable_options[:columns] = WikiPage.searchable_options[:columns].select{|c| c != 'text'}
-    WikiPage.searchable_options[:columns] << "#{WikiContent.table_name}.text"
-
     WikiPage.searchable_options[:columns] << "#{WikiPageTag.table_name}.tag"
     WikiPage.searchable_options[:include] << :wiki_page_tags
   end
 end
 
-require_dependency 'tagging_hooks'
+require_dependency 'tagging_plugin/tagging_hooks'
 
 Redmine::Plugin.register :redmine_tagging do
   name 'Redmine Tagging plugin'
@@ -36,21 +27,31 @@ Redmine::Plugin.register :redmine_tagging do
   settings :default => { :dynamic_font_size => "1", :sidebar_tagcloud => "1", :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
 
   Redmine::WikiFormatting::Macros.register do
-    desc "Wiki/Issues tagcloud" 
+    desc "Wiki/Issues tagcloud"
     macro :tagcloud do |obj, args|
       args, options = extract_macro_options(args, :parent)
 
-      if obj.is_a? WikiContent
-        project = obj.page.wiki.project
+      return if params[:controller] == "mailer"
+
+      if obj
+        if obj.is_a? WikiContent
+          project = obj.page.wiki.project
+        else
+          project = obj.project
+        end
       else
-        project = obj.project
+        project = Project.visible.where(:identifier => params[:project_id]).first
       end
 
-      if !project.nil? # this may be an attempt to render tag cloud when deleting wiki page
-        @controller.send(:render_to_string, { :partial => 'tagging/tagcloud', :locals => {:project => project} })
+      if project # this may be an attempt to render tag cloud when deleting wiki page
+        if [WikiContent, WikiContent::Version, NilClass].include?(obj.class)
+          render :partial => 'tagging/tagcloud_search', :project => project
+        elsif [Journal, Issue].include?(obj.class)
+          render :partial => 'tagging/tagcloud', :project => project
+        end
       end
     end
-  end 
+  end
 
   Redmine::WikiFormatting::Macros.register do
     desc "Wiki/Issues tag"
@@ -73,18 +74,28 @@ Redmine::Plugin.register :redmine_tagging do
         else
           project = obj.project
         end
-        context = project.identifier.gsub('-', '_')
 
-        # only save if there are differences
-        if obj.tag_list_on(context).sort.join(',') != tags.join(',')
-          obj.set_tag_list_on(context, tags.join(', '))
+        context = TaggingPlugin::ContextHelper.context_for(project)
+        tags_present = obj.tag_list_on(context).sort.join(',')
+        new_tags = tags.join(',')
+        if tags_present != new_tags
+          obj.tags_to_update = new_tags
           obj.save
         end
 
-        taglinks = tags.collect{|tag|
-          link_to("#{tag}", {:controller => "search", :action => "index", :id => project, :q => tag, :wiki_pages => true, :issues => true})
-        }.join('&nbsp;')
-        "<div class='tags'>#{taglinks}</div>"
+        taglinks = tags.collect do |tag|
+          search_url = {
+            :controller => "search",
+            :action => "index",
+            :id => project,
+            :q => "\"#{tag}\""
+          }
+
+          search_url.merge!(obj.is_a?(WikiPage) ? { :wiki_pages => true, :issues => false } : { :wiki_pages => false, :issues => true })
+          link_to(tag, search_url)
+        end.join('&nbsp;')
+
+        raw("<div class='tags'>#{taglinks}</div>")
       else
         ''
       end

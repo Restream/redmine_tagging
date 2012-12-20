@@ -1,0 +1,46 @@
+<% if @statuses.empty? or rows.empty? %>
+    <p><i><%=l(:label_no_data)%></i></p>
+<% else %>
+<table class="list">
+<thead><tr>
+<th style="width:25%"></th>
+<th align="center" style="width:25%"><%=l(:label_open_issues_plural)%></th>
+<th align="center" style="width:25%"><%=l(:label_closed_issues_plural)%></th>
+<th align="center" style="width:25%"><%=l(:label_total)%></th>
+</tr></thead>
+<tbody>
+<% for tag in rows %>
+<tr class="<%= cycle("odd", "even") %>">
+  <td>
+    <%= link_to_project_tag_filter(@project, tag.name) %>
+  </td>
+  <td align="center">
+    <%= link_to_project_tag_filter(
+      @project,
+      tag.name,
+      :status => "o",
+      :title => aggregate(data, { field_name => tag.id, "closed" => 0 }))
+    %>
+  </td>
+  <td align="center">
+    <%= link_to_project_tag_filter(
+      @project,
+      tag.name,
+      :status => "c",
+      :title => aggregate(data, { field_name => tag.id, "closed" => 1 }))
+    %>
+  </td>
+  <td align="center">
+    <%= link_to_project_tag_filter(
+      @project,
+      tag.name,
+      :status => "*",
+      :title => aggregate(data, { field_name => tag.id }))
+    %>
+  </td>
+</tr>
+<% end %>
+</tbody>
+</table>
+<% end
+  reset_cycle %>

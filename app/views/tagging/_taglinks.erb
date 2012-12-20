@@ -1,0 +1,8 @@
+<tr>
+  <th><%= l(:field_tags) %>:</th>
+  <td>
+  <% tags.each do |tag| %>
+    <%= link_to_project_tag_filter(@project, tag) %>
+  <% end %>
+  </td>
+</tr>

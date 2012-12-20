@@ -5,3 +5,12 @@ en:
   tagging_issues_inline: "Inline editing of tags for issues"
   tagging_sidebar_tagcloud: "Show tagcloud in issues sidebar"
   tagging_dynamic_font_size: "Font size in tag cloud based on tag use"
+  notice_successful_detached: "Tag successfully detached"
+  tagging_tab_label: "Tags"
+  label_tagname: "Tag name"
+  field_tag: "Tag title"
+
+  tags: "Tags"
+  append_tags: "Append tags instead of rewrite"
+  detach: "Detach"
+  tags_in_project: "Project tags"

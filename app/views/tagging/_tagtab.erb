@@ -1,0 +1,27 @@
+<% tags = @project.issues.map{ |i| i.taggings.map{ |tg| tg.tag } }.flatten.uniq %>
+
+<% if tags.any? %>
+<table class="list">
+  <thead><tr>
+  <th><%= l(:label_tagname) %></th>
+  <th></th>
+  </tr></thead>
+  <tbody>
+<% for issue_tag in tags %>
+  <tr class="<%= cycle 'odd', 'even' %>">
+    <td>
+      <%= link_to_project_tag_filter(@project, issue_tag.name) %>
+    </td>
+    <td class="buttons">
+      <%= link_to(l(:detach), {:controller => 'issue_tags', :action => 'destroy', :id => issue_tag.id,
+        :project_id => @project.id },
+        :method => :delete,
+        :class => 'icon icon-del') %>
+    </td>
+  </tr>
+<% end %>
+    </tbody>
+</table>
+<% else %>
+<p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>

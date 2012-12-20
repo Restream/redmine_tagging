@@ -5,6 +5,9 @@ Simple tagging for redmine. Features:
 * Tag suggestion/autocomplete
 * Redmine search integration (search for #tag to find wikis/issues)
 * Filter issues on tags
+* Project summary
+* Mass assignment and detachment
+* Issue journal logging
 
 Spaces _or_ commas will act as a separator when editing tags
 
@@ -12,34 +15,19 @@ Spaces _or_ commas will act as a separator when editing tags
 wiki sidebar. The tagcloud will automatically be rendered in the
 issues list sidebar.
 
-This plugin needs acts-as-taggable-on from rymai
-(http://github.com/rymai/acts-as-taggable-on) to be installed. The
-original plugin from http://github.com/mbleigh/acts-as-taggable-on
-needs patches to make it compatible with rails 2.3.5, which Redmine
-uses.
-
-The plugin also needs rails_sql_views. It might install automatically
-by just doing 'gem install rails_sql_views'. If not (it didn't for me when 0.7.0 was available),
-try:
-  $ git clone http://github.com/woodchuck/rails_sql_views.git
-  $ cd rails_sql_views
-  $ rake gem
-  $ sudo gem install --local pkg/rails_sql_views-0.*.gem
-
 = Installation
 
-While patches to acts-as-taggable-on are not merged to upstream, you should
-use a fork of it. Installation is performed with:
+Installation is performed with:
 
-  $ script/plugin install http://github.com/rymai/acts-as-taggable-on.git
-  $ script/plugin install http://github.com/friflaj/redmine_tagging.git
+  $ script/plugin install git://github.com/friflaj/redmine_tagging.git
+  $ bundle install
 
 You need to set up database for acts-as-taggable-on:
 
 1a) for Rails 2 (which Redmine currently uses):
   $ env RAILS_ENV=production script/generate acts_as_taggable_on_migration
 1b) for Rails 3:
-  $ rails generation acts_as_taggable_on:migration
+  $ rails generate acts_as_taggable_on:migration
 2)
   $ rake db:migrate RAILS_ENV=production
   $ rake db:migrate_plugins RAILS_ENV=production

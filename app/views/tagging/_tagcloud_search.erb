@@ -5,6 +5,6 @@
     tag_cloud_in_project(@project) do |tag, factor|
       options = {:style => "font-size: #{10 * factor + 9}pt" }
   %>
-      <%= link_to_project_tag_filter(@project, tag, {}, options) %>
+    <%= link_to(tag, {:controller => "search", :action => "index", :id => @project, :q => "\"#{tag}\"", :wiki_pages => true }, options) %>
   <% end %>
 </div>

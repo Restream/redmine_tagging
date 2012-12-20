@@ -1,0 +1,13 @@
+<a id="cloud_trigger"><b><%= t(:tags_in_project) %></b></a>
+<span id="cloud_content"> &mdash;
+  <%
+    tag_cloud_in_project(@project) do |tag, factor|
+      style = "font-size: #{10 * factor + 9}pt"
+  %>
+    <a class="tag_item"
+       data-tag="<%= tag_without_sharp(tag) %>"
+       style="<%= style %>">
+          <%= tag %>
+    </a> 
+  <% end %>
+</span>

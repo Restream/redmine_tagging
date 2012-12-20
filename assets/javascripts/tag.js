@@ -202,8 +202,7 @@
                             return true;
                         } else {
                             type = 'keyup'; // allow drop through
-                            resetSelection = true;
-                            showSuggestionsDelayed(this);
+                            showSuggestionsDelayed(this, ev.charCode);
                         }
                         break;
                     }

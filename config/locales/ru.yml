@@ -3,3 +3,6 @@ ru:
   field_tags: "Теги"
   tagging_wiki_pages_inline: "Использовать теги из текста страниц вики"
   tagging_issues_inline: "Использовать теги из описаний задач"
+  detach: "Отделить"
+  notice_successful_detached: "Тег успешно отвязан от всех тикетов проекта"
+  tags_in_project: "Теги в проекте"

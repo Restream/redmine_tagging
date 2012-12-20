@@ -1,0 +1,31 @@
+span.tagMatches {
+  margin-left: 10px;
+}
+
+span.tagMatches span {
+  padding: 2px;
+  margin-right: 4px;
+  background-color: #0000AB;
+  color: #fff;
+  cursor: pointer;
+}
+
+#cloud_trigger, #cloud_content a {
+  cursor: pointer;
+
+  text-decoration: none;
+  border-bottom: 1px dashed;
+}
+
+#cloud_trigger {
+  font-weight: bold;
+}
+
+#cloud_content a {
+  margin: 0.1em;
+}
+
+#cloud_content .selected {
+  background: #0000AB;
+  color: #fff;
+}
