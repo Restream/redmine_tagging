@@ -36,7 +36,8 @@ module TaggingPlugin
             :type => :list_optional,
             :values => tags,
             :name => l(:field_tags),
-            :order => 20
+            :order => 21,
+            :field => "tags"
           }
         }
 

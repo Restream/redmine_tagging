@@ -21,6 +21,19 @@ class IssuesControllerTest < ActionController::TestCase
     Issue.stubs(:allowed_target_projects_on_move).returns(Project.all)
   end
 
+  def test_can_index_issues_when_custom_fields_available
+    IssueCustomField.create!({
+      :name => "cfield",
+      :default_value => "ok",
+      :is_filter => true,
+      :field_format => "string",
+      :is_for_all => true
+    })
+
+    get :index
+    assert_response :success
+  end
+
   def test_can_index_api
     get :index, :format => 'json'
     assert_response :success
