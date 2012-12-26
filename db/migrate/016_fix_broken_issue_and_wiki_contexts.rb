@@ -38,5 +38,13 @@ class FixBrokenIssueAndWikiContexts < ActiveRecord::Migration
 
   def self.down
   end
+
+  def up
+    self.class.up
+  end
+
+  def down
+    self.class.down
+  end
 end
 

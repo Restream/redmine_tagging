@@ -10,5 +10,13 @@ class CreateViews < ActiveRecord::Migration
     drop_view :issue_tags
     drop_view :wiki_page_tags
   end
+
+  def up
+    self.class.up
+  end
+
+  def down
+    self.class.down
+  end
 end
 
