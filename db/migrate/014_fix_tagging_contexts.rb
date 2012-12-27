@@ -17,5 +17,13 @@ class FixTaggingContexts < ActiveRecord::Migration
       tagging.save
     end
   end
+
+  def up
+    self.class.up
+  end
+
+  def down
+    self.class.down
+  end
 end
 
