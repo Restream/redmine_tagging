@@ -16,7 +16,14 @@ def setup_issue_with_tags(test_tags)
   priority.save!
   public_project.trackers << tracker
 
-  issue = Issue.generate!(:project_id => public_project.id, :tracker => tracker, :priority => priority)
+  status = IssueStatus.create!(:name => "test_status#{public_project.id}")
+
+  issue = Issue.generate!({
+    :project_id => public_project.id,
+    :tracker => tracker,
+    :priority => priority,
+    :status => status
+  })
 
   issue.tags_to_update = test_tags
   issue.save!
