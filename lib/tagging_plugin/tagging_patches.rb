@@ -160,15 +160,7 @@ Issue.send(:include, TaggingPlugin::IssuePatch) unless Issue.included_modules.in
 
 WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
 
-[ 
-  IssuesController,
-  ReportsController,
-  WikiController,
-  ProjectsController,
-  CalendarsController
-].each do |controller|
-  controller.send(:include, TaggingPlugin::TaggingHelperPatch) unless controller.include? TaggingPlugin::TaggingHelperPatch
-end
+ApplicationController.send(:include, TaggingPlugin::TaggingHelperPatch) unless ApplicationController.include? TaggingPlugin::TaggingHelperPatch
 
 WikiController.send(:include, TaggingPlugin::WikiControllerPatch) unless WikiController.included_modules.include? TaggingPlugin::WikiControllerPatch
 
