@@ -79,17 +79,19 @@ module TaggingPlugin
       def column_content_with_tags(column, issue)
         value = column.value(issue)
 
-        if value.class.name == "Array"
-          if value.first.class.name == "IssueTag"
-            links = value.map do |issue_tag|
-              link_to_project_tag_filter(@project, issue_tag.tag)
-            end
-
-            links.join(', ')
+        if array_of_issue_tags?(value)
+          links = value.map do |issue_tag|
+            link_to_project_tag_filter(@project, issue_tag.tag)
           end
+
+          links.join(', ')
         else
           column_content_without_tags(column, issue)
         end
+      end
+
+      def array_of_issue_tags?(value)
+        Array === value && IssueTag === value.first
       end
     end
   end

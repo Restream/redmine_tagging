@@ -44,10 +44,12 @@ module TaggingPlugin
           #{tagging_stylesheet}
           #{javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'}
           <script type="text/javascript">
+            //<![CDATA[
             $(function() {
               #{sidebar_tags}
               $('#cloud_content').toggleCloudViaFor($('#cloud_trigger'), $('#issue_tags'))
             })
+            //]]>
           </script>
         TAGS
       end
@@ -90,6 +92,7 @@ module TaggingPlugin
         ac = ac.collect{|tag| "'#{escape_javascript(tag.gsub(/^#/, ''))}'"}.join(', ')
         tags += <<-generatedscript
           <script type="text/javascript">
+            //<![CDATA[
             $(document).ready(function() {
               $('#issue_tags').tagSuggest({ tags: [#{ac}] })
               var tags_container = $('#issue_tags').parent()
@@ -97,6 +100,7 @@ module TaggingPlugin
               $(tags_container).append(cloud)
               $('#cloud_content').toggleCloudViaFor($('#cloud_trigger'), $('#issue_tags'))
             })
+            //]]>
           </script>
         generatedscript
 
@@ -209,7 +213,7 @@ module TaggingPlugin
         field = "<p>
             <label>#{ l(:field_tags) }</label>
             #{ text_field_tag 'issue[tags]', '', :size => 18 }<br>
-            <input type=\"checkbox\" name=\"append_tags\" checked=\"checked\">
+            <input type=\"checkbox\" name=\"append_tags\" checked=\"checked\" />
             #{ l(:append_tags) }<br>
           </p>"
         return field + "<p>" + cloud + "</p>"
