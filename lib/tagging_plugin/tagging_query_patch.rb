@@ -91,7 +91,7 @@ module TaggingPlugin
       end
 
       def array_of_issue_tags?(value)
-        Array === value && IssueTag === value.first
+        value.class.name == 'Array' && value.first.class.name == 'IssueTag'
       end
     end
   end
