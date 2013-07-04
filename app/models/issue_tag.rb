@@ -43,4 +43,7 @@ class IssueTag < ActiveRecord::Base
         by s.id, s.is_closed, t.id")
   end
 
+  def to_s
+    name
+  end
 end
