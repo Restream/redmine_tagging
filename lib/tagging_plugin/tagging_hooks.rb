@@ -24,7 +24,7 @@ module TaggingPlugin
 
         unless ((Setting.plugin_redmine_tagging[:sidebar_tagcloud] == "1" &&
                  context[:controller].is_a?(WikiController)) ||
-                (context[:controller].is_a?(IssuesController) && 
+                (context[:controller].is_a?(IssuesController) &&
                  context[:controller].action_name == 'bulk_edit'))
           return tagging_stylesheet
         end
@@ -165,14 +165,20 @@ module TaggingPlugin
 
         if page && request.parameters['action'] == 'index'
           tags = page.tag_list_on(tag_context).sort.collect {|tag|
-            link_to("#{tag}", {:controller => "search", :action => "index", :project_id => project, :q => tag, :wiki_pages => true, :issues => true})
+            link_to("#{tag}", {
+                :controller => "search",
+                :action => "index",
+                :project_id => project,
+                :q => tag_without_sharp(tag),
+                :wiki_pages => true,
+                :issues => true})
           }.join('&nbsp;')
 
           tags = "<h3>#{l(:field_tags)}:</h3><p>#{tags}</p>" if tags
         end
 
         action = request.parameters['action']
-        
+
         if action == 'edit' || (!page && action == 'show')
           if page
             tags = TagsHelper.to_string(page.tag_list_on(tag_context))

@@ -1,4 +1,4 @@
-module TaggingHelper 
+module TaggingHelper
   def link_to_project_tag_filter(project, tag, options = {}, html_options = {})
     options.reverse_merge!({
       :status => 'o',
@@ -10,7 +10,7 @@ module TaggingHelper
       'f' => ['tags', 'status_id'],
       'op[tags]' => '=',
       'op[status_id]' => options[:status],
-      'v[tags][]' => tag,
+      'v[tags][]' => tag_without_sharp(tag),
       'v[status_id][]' => 1
     }
 
@@ -22,7 +22,7 @@ module TaggingHelper
   end
 
   def tag_without_sharp(tag)
-    tag[1..-1]
+    tag.gsub /^\s*#/, ''
   end
 
   def tag_cloud_in_project(project, &each_tag)
