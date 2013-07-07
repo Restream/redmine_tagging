@@ -22,7 +22,7 @@ module TaggingHelper
   end
 
   def tag_without_sharp(tag)
-    tag.gsub /^\s*#/, ''
+    tag.to_s.gsub /^\s*#/, ''
   end
 
   def tag_cloud_in_project(project, &each_tag)
