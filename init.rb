@@ -22,7 +22,7 @@ Redmine::Plugin.register :redmine_tagging do
   name 'Redmine Tagging plugin'
   author 'friflaj'
   description 'Wiki/issues tagging'
-  version '0.0.7'
+  version '0.0.8'
 
   settings :default => { :dynamic_font_size => "1", :sidebar_tagcloud => "1", :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
 
@@ -66,7 +66,8 @@ Redmine::Plugin.register :redmine_tagging do
 
       if inline
         args, options = extract_macro_options(args, :parent)
-        tags = args.collect{|a| a.split(/[#"'\s,]+/)}.flatten.select{|tag| !tag.blank?}.collect{|tag| "##{tag}" }.uniq.sort
+        tags = args.collect{|a| a.split(/[#"'\s,]+/)}.flatten.select{|tag| !tag.blank?}.collect{|tag| "##{tag}" }.uniq
+        tags.sort_by! { |t| t.downcase }
 
         if obj.is_a? WikiContent
           obj = obj.page
@@ -76,7 +77,7 @@ Redmine::Plugin.register :redmine_tagging do
         end
 
         context = TaggingPlugin::ContextHelper.context_for(project)
-        tags_present = obj.tag_list_on(context).sort.join(',')
+        tags_present = obj.tag_list_on(context).sort_by { |t| t.downcase }.join(',')
         new_tags = tags.join(',')
         if tags_present != new_tags
           obj.tags_to_update = new_tags

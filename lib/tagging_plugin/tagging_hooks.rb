@@ -60,7 +60,7 @@ module TaggingPlugin
         issue = context[:issue]
         snippet = ''
         tag_context = ContextHelper.context_for(issue.project)
-        tags = issue.tag_list_on(tag_context).sort
+        tags = issue.tag_list_on(tag_context).sort_by { |t| t.downcase }
 
         return context[:controller].send(:render_to_string, {
             :partial => 'tagging/taglinks',
@@ -79,7 +79,10 @@ module TaggingPlugin
           result += issue_tag_field context[:form], tags
         else
           tag_context = ContextHelper.context_for(issue.project)
-          tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
+          tags = issue.tag_list_on(tag_context) \
+            .sort_by { |t| t.downcase } \
+            .map { |tag| tag.gsub(/^#/, '')} \
+            .join(' ')
           result += issue_tag_field context[:form], tags
 
           result += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
@@ -180,7 +183,7 @@ module TaggingPlugin
         tags = ''
 
         if page && request.parameters['action'] == 'index'
-          tags = page.tag_list_on(tag_context).sort.collect {|tag|
+          tags = page.tag_list_on(tag_context).sort_by { |t| t.downcase }.map do |tag|
             link_to("#{tag}", {
                 :controller => "search",
                 :action => "index",
@@ -188,7 +191,7 @@ module TaggingPlugin
                 :q => tag_without_sharp(tag),
                 :wiki_pages => true,
                 :issues => true})
-          }.join('&nbsp;')
+          end.join('&nbsp;')
 
           tags = "<h3>#{l(:field_tags)}:</h3><p>#{tags}</p>" if tags
         end

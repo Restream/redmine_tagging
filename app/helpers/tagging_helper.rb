@@ -56,7 +56,7 @@ module TaggingHelper
 
       dynamic_fonts_enabled = (Setting.plugin_redmine_tagging[:dynamic_font_size] == "1")
 
-      tags.keys.sort.each do |tag|
+      tags.keys.sort_by { |t| t.downcase }.each do |tag|
         if dynamic_fonts_enabled && (distance != 0)
           count = tags[tag]
           factor = (count - min_max[0]).to_f / distance
