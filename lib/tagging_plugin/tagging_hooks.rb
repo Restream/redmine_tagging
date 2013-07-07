@@ -72,21 +72,28 @@ module TaggingPlugin
         return '' if Setting.plugin_redmine_tagging[:issues_inline] == '1'
 
         issue = context[:issue]
+        result = ''
 
         if context[:request].params[:issue] # update form
-          tags = context[:request].params[:issue][:tags]
-          tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
+          tags = context[:request].params[:issue][:tags].join(' ')
+          result += issue_tag_field context[:form], tags
         else
           tag_context = ContextHelper.context_for(issue.project)
           tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
-          tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
+          result += issue_tag_field context[:form], tags
 
-          tags += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
-          tags += javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'
+          result += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
+          result += javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'
         end
 
-        tags + issue_cloud_javascript(context)
+        result + issue_cloud_javascript(context)
       end
+
+      def issue_tag_field(form, tags = '')
+        options = { :autocomplete => 'off', :value => tags }
+        '<p>' + form.text_field(:tags, options) + '</p>'
+      end
+      private :issue_tag_field
 
       def issue_cloud_javascript(context)
         tag_context = ContextHelper.context_for(context[:issue].project)

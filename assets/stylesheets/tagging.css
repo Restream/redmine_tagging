@@ -1,10 +1,10 @@
-span.tagMatches {
+.tagMatches {
   margin-left: 10px;
 }
 
-span.tagMatches span {
-  padding: 2px;
-  margin-right: 4px;
+.tagMatches ._tag_suggestion {
+  padding: 1px;
+  margin-left: 1px;
   background-color: #0000AB;
   color: #fff;
   cursor: pointer;
@@ -28,4 +28,8 @@ span.tagMatches span {
 #cloud_content .selected {
   background: #0000AB;
   color: #fff;
+}
+
+#issue_tags {
+  width: 90%;
 }
