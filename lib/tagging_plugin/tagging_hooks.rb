@@ -69,43 +69,52 @@ module TaggingPlugin
       end
 
       def view_issues_form_details_bottom(context={})
-        return '' if Setting.plugin_redmine_tagging[:issues_inline] == "1"
+        return '' if Setting.plugin_redmine_tagging[:issues_inline] == '1'
 
-        issue = Issue.visible.find_by_id(context[:issue].id) || context[:issue]
+        issue = context[:issue]
 
-        tag_context = ContextHelper.context_for(issue.project)
+        if context[:request].params[:issue] # update form
+          tags = context[:request].params[:issue][:tags]
+          tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
+        else
+          tag_context = ContextHelper.context_for(issue.project)
+          tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
+          tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
 
-        tags = issue.tag_list_on(tag_context).sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
+          tags += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
+          tags += javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'
+        end
 
-        tags = '<p>' + context[:form].text_field(:tags, :value => tags) + '</p>'
-        tags += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
-        tags += javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'
+        tags + issue_cloud_javascript(context)
+      end
+
+      def issue_cloud_javascript(context)
+        tag_context = ContextHelper.context_for(context[:issue].project)
+        ac = ActsAsTaggableOn::Tag.where(
+            "id in (select tag_id from taggings where taggable_type in ('WikiPage', 'Issue') and context = ?)",
+            tag_context)
+        ac = ac.map { |tag| "'#{escape_javascript(tag.to_s.gsub(/^\s*#/, ''))}'" }.join(', ')
 
         cloud = context[:controller].send(:render_to_string, {
             :partial => 'tagging/issue_tagcloud',
             :locals => context
         })
 
-        ac = ActsAsTaggableOn::Tag.find(:all,
-            :conditions => ["id in (select tag_id from taggings
-            where taggable_type in ('WikiPage', 'Issue') and context = ?)", tag_context]).collect {|tag| tag.name}
-        ac = ac.collect{|tag| "'#{escape_javascript(tag.gsub(/^#/, ''))}'"}.join(', ')
-        tags += <<-generatedscript
+        <<-generatedscript
           <script type="text/javascript">
             //<![CDATA[
             $(document).ready(function() {
-              $('#issue_tags').tagSuggest({ tags: [#{ac}] })
-              var tags_container = $('#issue_tags').parent()
-              var cloud = $("<div>#{escape_javascript(cloud)}</div>")
-              $(tags_container).append(cloud)
-              $('#cloud_content').toggleCloudViaFor($('#cloud_trigger'), $('#issue_tags'))
-            })
+              $('#issue_tags').tagSuggest({ tags: [#{ac}] });
+              var tags_container = $('#issue_tags').parent();
+              var cloud = $("<div>#{escape_javascript(cloud)}</div>");
+              $(tags_container).append(cloud);
+              $('#cloud_content').toggleCloudViaFor($('#cloud_trigger'), $('#issue_tags'));
+            });
             //]]>
           </script>
         generatedscript
-
-        return tags
       end
+      private :issue_cloud_javascript
 
       def controller_issues_bulk_edit_before_save(context={})
         return if Setting.plugin_redmine_tagging[:issues_inline] == "1"

@@ -49,7 +49,7 @@ class TaggingTest < ActionController::IntegrationTest
       Setting.plugin_redmine_tagging[:issues_inline] = "0"
 
       issue_attrs = @issue_with_tags.attributes
-      
+
       issue_attrs['project_id'] = @another_project.id
       issue_attrs['tracker'] = @another_project.trackers.first
       issue_attrs['tags'] = "10 11 12"
