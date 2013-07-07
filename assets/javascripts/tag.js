@@ -171,6 +171,7 @@
 
                 tagsElm.val(workingTags.join(settings.separator));
                 tagsElm.blur().focus();
+                tagsElm.change();
                 setSelection();
             }
 
