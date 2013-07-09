@@ -75,7 +75,7 @@ module TaggingPlugin
         result = ''
 
         if context[:request].params[:issue] # update form
-          tags = context[:request].params[:issue][:tags].join(' ')
+          tags = context[:request].params[:issue][:tags]
           result += issue_tag_field context[:form], tags
         else
           tag_context = ContextHelper.context_for(issue.project)
