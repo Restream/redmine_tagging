@@ -18,26 +18,33 @@ module TaggingPlugin
     end
 
     module InstanceMethods
+      #def values_for
+
       def available_filters_with_tags
         @available_filters = available_filters_without_tags
 
         if project.nil?
-          tags = ActsAsTaggableOn::Tag.find(:all, :conditions => "id in (select tag_id from taggings where taggable_type = 'Issue')")
+          tags = ActsAsTaggableOn::Tag.where(
+            "id in (select tag_id from taggings where taggable_type = 'Issue')"
+          )
         else
-
           context = ContextHelper.context_for(project)
-          tags = ActsAsTaggableOn::Tag.find(:all,
-                  :conditions => ["id in (select tag_id from taggings where taggable_type = 'Issue' and context = ?)", context])
+          tags = ActsAsTaggableOn::Tag.where(
+            "id in (select tag_id from taggings where taggable_type = 'Issue' and context = ?)",
+            context
+          )
         end
-        tags = tags.collect { |tag| [tag_without_sharp(tag), tag_without_sharp(tag)] }
+        tags = tags.sort_by { |t| t.name.downcase }.map do |tag|
+          [tag_without_sharp(tag), tag_without_sharp(tag)]
+        end
 
         tag_filter = {
-          "tags" => {
+          'tags' => {
             :type => :list_optional,
             :values => tags,
             :name => l(:field_tags),
             :order => 21,
-            :field => "tags"
+            :field => 'tags'
           }
         }
 
@@ -45,23 +52,22 @@ module TaggingPlugin
       end
 
       def sql_for_field_with_tags(field, operator, v, db_table, db_field, is_custom_filter=false)
-        if field == "tags"
-          selected_values = values_for(field)
+        if field == 'tags'
           if operator == '!*'
             sql = "(#{Issue.table_name}.id NOT IN (select taggable_id from taggings where taggable_type='Issue'))"
             return sql
-          elsif operator == "*"
+          elsif operator == '*'
             sql = "(#{Issue.table_name}.id IN (select taggable_id from taggings where taggable_type='Issue'))"
             return sql
           else
-            selected_values.map! { |tag| tag_with_sharp(tag) }
+            selected_values = values_for(field).map { |tag| tag_with_sharp(tag) }
             sql = selected_values.collect{|val| "'#{ActiveRecord::Base.connection.quote_string(val.downcase.gsub('\'', ''))}'"}.join(',')
             sql = "(#{Issue.table_name}.id in (select taggable_id from taggings join tags on tags.id = taggings.tag_id where taggable_type='Issue' and tags.name in (#{sql})))"
             sql = "(not #{sql})" if operator == '!'
             return sql
           end
         else
-          return sql_for_field_without_tags(field, operator, v, db_table, db_field, is_custom_filter)
+          sql_for_field_without_tags(field, operator, v, db_table, db_field, is_custom_filter)
         end
       end
 
@@ -92,7 +98,6 @@ module TaggingPlugin
           links = value.map do |issue_tag|
             link_to_project_tag_filter(@project, issue_tag.tag)
           end
-
           links.join(', ')
         else
           column_content_without_tags(column, issue)
