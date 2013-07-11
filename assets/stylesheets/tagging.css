@@ -33,3 +33,7 @@
 #issue_tags {
   width: 90%;
 }
+
+.filter select[name="v[tags][]"][multiple] {
+  min-height: 200px;
+}
