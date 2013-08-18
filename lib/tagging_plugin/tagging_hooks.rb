@@ -84,7 +84,9 @@ module TaggingPlugin
             .map { |tag| tag.gsub(/^#/, '')} \
             .join(' ')
           result += issue_tag_field context[:form], tags
+        end
 
+        unless context[:request].xhr?
           result += javascript_include_tag 'tag', :plugin => 'redmine_tagging'
           result += javascript_include_tag 'toggle_tags', :plugin => 'redmine_tagging'
         end
