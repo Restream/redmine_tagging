@@ -1,5 +1,8 @@
 = Tagging
 
+{<img src="https://travis-ci.org/Undev/redmine_tagging.png" alt="Build Status" />}[https://travis-ci.org/Undev/redmine_tagging]
+{<img src="https://codeclimate.com/github/Undev/redmine_tagging.png" />}[https://codeclimate.com/github/Undev/redmine_tagging]
+
 Simple tagging for redmine. Features:
 * Tag cloud in the sidebar
 * Tag suggestion/autocomplete
@@ -19,12 +22,12 @@ issues list sidebar.
 
 Installation is performed with:
 
-  $ script/plugin install git://github.com/friflaj/redmine_tagging.git
+  $ git clone https://github.com/Undev/redmine_tagging.git plugins/redmine_tagging
   $ bundle install
 
 You need to set up database for acts-as-taggable-on:
 
-1a) for Rails 2 (which Redmine currently uses):
+1a) for Rails 2:
   $ env RAILS_ENV=production script/generate acts_as_taggable_on_migration
 1b) for Rails 3:
   $ rails generate acts_as_taggable_on:migration
