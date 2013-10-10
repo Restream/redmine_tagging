@@ -44,8 +44,8 @@ before_install:
 
 before_script:
   - rake db:create
-  - rails generate acts_as_taggable_on:migration
   - rake db:migrate
+  - rails generate acts_as_taggable_on:migration
   - rake redmine:plugins:migrate
 
 script:
