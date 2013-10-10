@@ -1,14 +1,6 @@
 # Load the normal Rails helper
 require File.expand_path(File.dirname(__FILE__) + '/../../../test/test_helper')
 
-require 'test/unit/util/backtracefilter'
-
-module Test::Unit::Util::BacktraceFilter
-  def filter_backtrace(backtrace, prefix=nil)
-    backtrace
-  end
-end
-
 def setup_issue_with_tags(test_tags)
   public_project = Project.generate!(:is_public => true)
   tracker = Tracker.generate!
