@@ -110,8 +110,8 @@ class TaggingTest < ActionController::IntegrationTest
 
   context "wiki_page" do
     def test_should_generate_wiki_tagcloud
-      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, "newpage")
-      page_path = project_wiki_path(@project_with_wiki_tags, "newpage")
+      edit_page_path = edit_wiki_cpath(@project_with_wiki_tags, "newpage")
+      page_path = wiki_cpath(@project_with_wiki_tags, "newpage")
 
       page_content = @wiki_page_with_tags_content.attributes.merge(
         'text' =>  "{{tag(11)}} {{tag(14 15)}} {{tagcloud}}"
@@ -130,8 +130,8 @@ class TaggingTest < ActionController::IntegrationTest
     def test_should_create_wiki_page_tags_from_input
       Setting.plugin_redmine_tagging[:wiki_pages_inline] = "0"
 
-      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, "newpage")
-      page_path = project_wiki_path(@project_with_wiki_tags, "newpage")
+      edit_page_path = edit_wiki_cpath(@project_with_wiki_tags, "newpage")
+      page_path = wiki_cpath(@project_with_wiki_tags, "newpage")
 
       page_content = @wiki_page_with_tags_content.attributes
       page_attrs = @wiki_page_with_tags.attributes
@@ -152,8 +152,8 @@ class TaggingTest < ActionController::IntegrationTest
     def test_should_update_wiki_page_tags_from_input
       Setting.plugin_redmine_tagging[:wiki_pages_inline] = "0"
 
-      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
-      page_path = project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
+      edit_page_path = edit_wiki_cpath(@project_with_wiki_tags, @wiki_page_with_tags.title)
+      page_path = wiki_cpath(@project_with_wiki_tags, @wiki_page_with_tags.title)
       page_content = @wiki_page_with_tags_content.attributes
       page_attrs = @wiki_page_with_tags.attributes
       page_attrs['tags'] = "10 11 12"
@@ -173,8 +173,8 @@ class TaggingTest < ActionController::IntegrationTest
     def test_should_create_inline_wiki_page_tags
       Setting.plugin_redmine_tagging[:wiki_pages_inline] = "1"
 
-      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, "newpage")
-      page_path = project_wiki_path(@project_with_wiki_tags, "newpage")
+      edit_page_path = edit_wiki_cpath(@project_with_wiki_tags, "newpage")
+      page_path = wiki_cpath(@project_with_wiki_tags, "newpage")
 
       page_content = @wiki_page_with_tags_content.attributes.merge(
         'text' =>  "{{tag(11)}} {{tag(14 15)}}"
@@ -197,8 +197,8 @@ class TaggingTest < ActionController::IntegrationTest
     def test_should_update_inline_wiki_page_tags
       Setting.plugin_redmine_tagging[:wiki_pages_inline] = "1"
 
-      edit_page_path = edit_project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
-      page_path = project_wiki_path(@project_with_wiki_tags, @wiki_page_with_tags.title)
+      edit_page_path = edit_wiki_cpath(@project_with_wiki_tags, @wiki_page_with_tags.title)
+      page_path = wiki_cpath(@project_with_wiki_tags, @wiki_page_with_tags.title)
 
       page_content = @wiki_page_with_tags_content.attributes.merge(
         'text' =>  "{{tag(11)}} {{tag(14 15)}}"
@@ -217,5 +217,17 @@ class TaggingTest < ActionController::IntegrationTest
       assert_equal 2, @wiki_page_with_tags.taggings.size
       assert_equal [@project_with_wiki_tags_context], @wiki_page_with_tags.taggings.map(&:context).uniq
     end
+  end
+
+  def wiki_cpath(project, page)
+    project_wiki_page_path(project, page)
+  rescue NoMethodError
+    project_wiki_path(project, page)
+  end
+
+  def edit_wiki_cpath(project, page)
+    edit_project_wiki_page_path(project, page)
+  rescue NoMethodError
+    edit_project_wiki_path(project, page)
   end
 end
