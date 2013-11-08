@@ -123,14 +123,6 @@ module TaggingPlugin
     end
   end
 
-  module TaggingHelperPatch
-    def self.included(base)
-      base.class_eval do
-        helper :tagging
-      end
-    end
-  end
-
   module WikiControllerPatch
     def self.included(base) # :nodoc:
       base.send(:include, InstanceMethods)
@@ -159,8 +151,6 @@ end
 Issue.send(:include, TaggingPlugin::IssuePatch) unless Issue.included_modules.include? TaggingPlugin::IssuePatch
 
 WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
-
-ApplicationController.send(:include, TaggingPlugin::TaggingHelperPatch) unless ApplicationController.include? TaggingPlugin::TaggingHelperPatch
 
 WikiController.send(:include, TaggingPlugin::WikiControllerPatch) unless WikiController.included_modules.include? TaggingPlugin::WikiControllerPatch
 

@@ -1,7 +1,5 @@
 <%
-   #TODO: refactoring needed!
-   tags = @project.issues.map{ |i| i.taggings.map{ |tg| tg.tag } }.flatten \
-      .sort_by { |t| t.name.downcase }.uniq
+   tags = @project.tags
 %>
 
 <% if tags.any? %>

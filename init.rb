@@ -4,6 +4,7 @@ ActionDispatch::Callbacks.to_prepare do
   require 'tagging_plugin/tagging_patches'
   require 'tagging_plugin/tagging_query_patch'
   require 'tagging_plugin/api_template_handler_patch'
+  require 'redmine_tagging'
 
   if !Issue.searchable_options[:include].include? :issue_tags
     Issue.searchable_options[:columns] << "#{IssueTag.table_name}.tag"
