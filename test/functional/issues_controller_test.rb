@@ -18,7 +18,7 @@ class IssuesControllerTest < ActionController::TestCase
     @project_with_tags = @issue_with_tags.project
     @another_project = Project.generate!
 
-    Issue.stubs(:allowed_target_projects_on_move).returns(Project.all)
+    Issue.stubs(:allowed_target_projects_on_move).returns(Project.scoped)
   end
 
   def test_can_index_issues_when_custom_fields_available
@@ -63,7 +63,7 @@ class IssuesControllerTest < ActionController::TestCase
     @issue_with_tags.reload
 
     another_project_context = TaggingPlugin::ContextHelper.context_for(@another_project)
-    tags = @issue_with_tags.tags_on(another_project_context)      
+    tags = @issue_with_tags.tags_on(another_project_context)
     assert_equal ['#1', '#2', '#3', '#4', '#5', '#777', '#cool/tag'], tags.map(&:name).sort
   end
 
@@ -75,7 +75,7 @@ class IssuesControllerTest < ActionController::TestCase
     @issue_with_tags.reload
 
     project_context = TaggingPlugin::ContextHelper.context_for(@project_with_tags)
-    tags = @issue_with_tags.tags_on(project_context)      
+    tags = @issue_with_tags.tags_on(project_context)
     assert_equal ['#1', '#2', '#3', '#4', '#5', '#777', '#cool/tag'], tags.map(&:name).sort
   end
 
