@@ -51,24 +51,44 @@ module TaggingPlugin
         @available_filters.merge(tag_filter)
       end
 
-      def sql_for_field_with_tags(field, operator, v, db_table, db_field, is_custom_filter=false)
+      def sql_for_field_with_tags(field, operator, v, db_table, db_field, is_custom_filter = false)
         if field == 'tags'
-          if operator == '!*'
-            sql = "(#{Issue.table_name}.id NOT IN (select taggable_id from taggings where taggable_type='Issue'))"
-            return sql
-          elsif operator == '*'
-            sql = "(#{Issue.table_name}.id IN (select taggable_id from taggings where taggable_type='Issue'))"
-            return sql
-          else
-            selected_values = values_for(field).map { |tag| tag_with_sharp(tag) }
-            sql = selected_values.collect{|val| "'#{ActiveRecord::Base.connection.quote_string(val.downcase.gsub('\'', ''))}'"}.join(',')
-            sql = "(#{Issue.table_name}.id in (select taggable_id from taggings join tags on tags.id = taggings.tag_id where taggable_type='Issue' and tags.name in (#{sql})))"
-            sql = "(not #{sql})" if operator == '!'
-            return sql
-          end
+          tagging_sql(field, operator)
         else
           sql_for_field_without_tags(field, operator, v, db_table, db_field, is_custom_filter)
         end
+      end
+
+      def tagging_sql(field, operator)
+        case operator
+          when '!*'
+            tagging_sql_none
+          when '*'
+            tagging_sql_any
+          when '!'
+            tagging_sql_not_equal(field)
+          else
+            tagging_sql_equal(field)
+        end
+      end
+
+      def tagging_sql_none
+        "(#{Issue.table_name}.id NOT IN (select taggable_id from taggings where taggable_type='Issue'))"
+      end
+
+      def tagging_sql_any
+        "(#{Issue.table_name}.id IN (select taggable_id from taggings where taggable_type='Issue'))"
+      end
+
+      def tagging_sql_not_equal(field)
+        sql = tagging_sql_equal(field)
+        "(not #{sql})"
+      end
+
+      def tagging_sql_equal(field)
+        selected_values = values_for(field).map { |tag| tag_with_sharp(tag) }
+        sql = selected_values.collect { |val| "'#{ActiveRecord::Base.connection.quote_string(val.downcase.gsub('\'', ''))}'" }.join(',')
+        "(#{Issue.table_name}.id in (select taggable_id from taggings join tags on tags.id = taggings.tag_id where taggable_type='Issue' and tags.name in (#{sql})))"
       end
 
       def tag_without_sharp(tag)
