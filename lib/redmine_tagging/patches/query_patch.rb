@@ -15,9 +15,9 @@ module RedmineTagging::Patches::QueryPatch
 
   def available_filters_with_tags
     unless @available_tag_filter
-      @available_tag_filter = available_tags_filter
       @available_filters = available_filters_without_tags
-      @available_filters.merge(@available_tag_filter)
+      @available_tag_filter = available_tags_filter
+      @available_filters.merge!(@available_tag_filter)
     end
     @available_filters
   end
