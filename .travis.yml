@@ -45,12 +45,12 @@ before_install:
   - cd $REDMINE_PATH
 
 before_script:
-  - rake db:create
-  - rake db:migrate
-  - rails generate acts_as_taggable_on:migration
-  - rake db:migrate
-  - rake redmine:plugins:migrate
+  - bundle exec rake db:create
+  - bundle exec rake db:migrate
+  - bundle exec rails generate acts_as_taggable_on:migration
+  - bundle exec rake db:migrate
+  - bundle exec rake redmine:plugins:migrate
 
 script:
-  - rake redmine:plugins:test NAME=$PLUGIN_NAME
+  - bundle exec rake redmine:plugins:test NAME=$PLUGIN_NAME
 
