@@ -18,37 +18,41 @@ module TaggingPlugin
     end
 
     module InstanceMethods
-      #def values_for
 
       def available_filters_with_tags
-        @available_filters = available_filters_without_tags
+        unless @available_tag_filter
+          @available_tag_filter = available_tags_filter
+          @available_filters = available_filters_without_tags
+          @available_filters.merge(@available_tag_filter)
+        end
+        @available_filters
+      end
 
+      def available_tags_filter
         if project.nil?
           tags = ActsAsTaggableOn::Tag.where(
-            "id in (select tag_id from taggings where taggable_type = 'Issue')"
+              "id in (select tag_id from taggings where taggable_type = 'Issue')"
           )
         else
           context = ContextHelper.context_for(project)
           tags = ActsAsTaggableOn::Tag.where(
-            "id in (select tag_id from taggings where taggable_type = 'Issue' and context = ?)",
-            context
+              "id in (select tag_id from taggings where taggable_type = 'Issue' and context = ?)",
+              context
           )
         end
         tags = tags.sort_by { |t| t.name.downcase }.map do |tag|
           [tag_without_sharp(tag), tag_without_sharp(tag)]
         end
 
-        tag_filter = {
-          'tags' => {
-            :type => :list_optional,
-            :values => tags,
-            :name => l(:field_tags),
-            :order => 21,
-            :field => 'tags'
-          }
+        {
+            'tags' => {
+                :type => :list_optional,
+                :values => tags,
+                :name => l(:field_tags),
+                :order => 21,
+                :field => 'tags'
+            }
         }
-
-        @available_filters.merge(tag_filter)
       end
 
       def sql_for_field_with_tags(field, operator, v, db_table, db_field, is_custom_filter = false)
