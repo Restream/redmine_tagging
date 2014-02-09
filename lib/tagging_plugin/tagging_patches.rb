@@ -93,6 +93,10 @@ module TaggingPlugin
         init_journal_without_tags(user, notes)
       end
 
+      def tags
+        issue_tags.map(&:to_s).join(' ')
+      end
+
       private
         def update_tags
           project_context = ContextHelper.context_for(project)
