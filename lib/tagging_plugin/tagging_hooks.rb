@@ -209,9 +209,11 @@ module TaggingPlugin
 
           tags = "<p id='tagging_wiki_edit_block'><label>#{l(:field_tags)}</label><input id='wiki_page_tags' name='wiki_page[tags]' size='120' type='text' value='#{h(tags)}'/></p>"
 
-          ac = ActsAsTaggableOn::Tag.find(:all,
-              :conditions => ["id in (select tag_id from taggings
-              where taggable_type in ('WikiPage', 'Issue') and context = ?)", tag_context]).collect {|tag| tag.name}
+          ac = ActsAsTaggableOn::Tag.where(
+              "id in (select tag_id from taggings where taggable_type in ('WikiPage', 'Issue') and context = ?)",
+              tag_context
+          ).collect {|tag| tag.name}
+
           ac = ac.collect{|tag| "'#{escape_javascript(tag.gsub(/^#/, ''))}'"}.join(', ')
 
           tags += javascript_include_tag 'jquery_loader', :plugin => 'redmine_tagging'

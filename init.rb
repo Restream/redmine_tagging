@@ -22,7 +22,7 @@ Redmine::Plugin.register :redmine_tagging do
   name 'Redmine Tagging plugin'
   author 'friflaj'
   description 'Wiki/issues tagging'
-  version '0.0.12'
+  version '0.0.13'
 
   settings :default => { :dynamic_font_size => "1", :sidebar_tagcloud => "1", :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
 
