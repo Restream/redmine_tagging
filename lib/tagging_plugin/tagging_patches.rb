@@ -50,83 +50,6 @@ module TaggingPlugin
     end
   end
 
-  module IssuePatch
-    def self.included(base) # :nodoc:
-      base.send(:include, InstanceMethods)
-
-      base.class_eval do
-        unloadable
-
-        attr_writer :tags_to_update
-
-        before_save :update_tags
-        acts_as_taggable
-
-        after_save :cleanup_tags
-
-        has_many :issue_tags
-
-        alias_method_chain :create_journal, :tags
-        alias_method_chain :init_journal, :tags
-      end
-    end
-
-    module InstanceMethods
-      def create_journal_with_tags
-        if @current_journal
-          tag_context = ContextHelper.context_for(project)
-          before = @issue_tags_before_change
-          after = TagsHelper.to_string(tag_list_on(tag_context))
-          unless before == after
-            @current_journal.details << JournalDetail.new(:property => 'attr',
-                                                          :prop_key => 'tags',
-                                                          :old_value => before,
-                                                          :value => after)
-          end
-        end
-        create_journal_without_tags
-      end
-
-      def init_journal_with_tags(user, notes = "")
-        tag_context = ContextHelper.context_for(project)
-        @issue_tags_before_change = TagsHelper.to_string(tag_list_on(tag_context))
-        init_journal_without_tags(user, notes)
-      end
-
-      def tags
-        issue_tags.map(&:to_s).join(' ')
-      end
-
-      private
-        def update_tags
-          project_context = ContextHelper.context_for(project)
-
-          # Fix context if project changed
-          if project_id_changed? && !new_record?
-            @new_project_id = project_id
-
-            taggings.update_all(:context => project_context)
-          end
-
-          if @tags_to_update
-            set_tag_list_on(project_context, @tags_to_update)
-          end
-
-          true
-        end
-
-        def cleanup_tags
-          if @new_project_id
-            context = ContextHelper.context_for(project)
-            ActsAsTaggableOn::Tagging.where("
-              context!=? AND taggable_id=? AND taggable_type=?",
-              context, id, "Issue").delete_all
-          end
-          true
-        end
-    end
-  end
-
   module WikiControllerPatch
     def self.included(base) # :nodoc:
       base.send(:include, InstanceMethods)
@@ -151,8 +74,6 @@ module TaggingPlugin
     end
   end
 end
-
-Issue.send(:include, TaggingPlugin::IssuePatch) unless Issue.included_modules.include? TaggingPlugin::IssuePatch
 
 WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
 
