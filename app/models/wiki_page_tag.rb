@@ -1,4 +1,5 @@
 class WikiPageTag < ActiveRecord::Base
+  self.table_name = :wiki_page_tags
   self.primary_key = :id
 
   belongs_to :wiki_page

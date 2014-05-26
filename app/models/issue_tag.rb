@@ -1,4 +1,5 @@
 class IssueTag < ActiveRecord::Base
+  self.table_name = :issue_tags
   self.primary_key = :id
 
   belongs_to :issue
