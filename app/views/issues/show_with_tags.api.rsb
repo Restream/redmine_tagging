@@ -22,6 +22,7 @@ api.issue do
 
   api.created_on @issue.created_on
   api.updated_on @issue.updated_on
+  api.closed_on @issue.closed_on
 
   api.array :tags do
     @issue.issue_tags.each do |issue_tag|
@@ -54,7 +55,7 @@ api.issue do
   end if include_in_api_response?('changesets') && User.current.allowed_to?(:view_changesets, @project)
 
   api.array :journals do
-    @issue.journals.each do |journal|
+    @journals.each do |journal|
       api.journal :id => journal.id do
         api.user(:id => journal.user_id, :name => journal.user.name) unless journal.user.nil?
         api.notes journal.notes
@@ -70,4 +71,10 @@ api.issue do
       end
     end
   end if include_in_api_response?('journals')
+
+  api.array :watchers do
+    @issue.watcher_users.each do |user|
+      api.user :id => user.id, :name => user.name
+    end
+  end if include_in_api_response?('watchers') && User.current.allowed_to?(:view_issue_watchers, @issue.project)
 end
