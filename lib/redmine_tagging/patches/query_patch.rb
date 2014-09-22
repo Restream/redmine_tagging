@@ -84,9 +84,10 @@ module RedmineTagging::Patches::QueryPatch
   end
 
   def tagging_sql_equal(field)
-    selected_values = values_for(field).map { |tag| tag_with_sharp(tag) }
-    sql = selected_values.collect { |val| "'#{ActiveRecord::Base.connection.quote_string(val.downcase.gsub('\'', ''))}'" }.join(',')
-    "(#{Issue.table_name}.id in (select taggable_id from taggings join tags on tags.id = taggings.tag_id where taggable_type='Issue' and lower(tags.name) in (#{sql})))"
+    selected_values = values_for(field).map { |tag| tag_with_sharp(tag).upcase }
+    selected_values += values_for(field).map { |tag| tag_with_sharp(tag).downcase }
+    sql = selected_values.collect { |val| "'#{ActiveRecord::Base.connection.quote_string(val.gsub('\'', ''))}'" }.join(',')
+    "(#{Issue.table_name}.id in (select taggable_id from taggings join tags on tags.id = taggings.tag_id where taggable_type='Issue' and tags.name in (#{sql})))"
   end
 
   def tag_without_sharp(tag)
