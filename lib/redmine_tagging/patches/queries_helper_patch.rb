@@ -2,7 +2,6 @@ module RedmineTagging::Patches::QueriesHelperPatch
   extend ActiveSupport::Concern
 
   included do
-    unloadable # Send unloadable so it will not be unloaded in development
     alias_method_chain :column_content, :tags
   end
 
@@ -22,8 +21,4 @@ module RedmineTagging::Patches::QueriesHelperPatch
   def array_of_issue_tags?(value)
     value.class.name == 'Array' && value.first.class.name == 'IssueTag'
   end
-end
-
-unless QueriesHelper.included_modules.include? RedmineTagging::Patches::QueriesHelperPatch
-  QueriesHelper.send :include, RedmineTagging::Patches::QueriesHelperPatch
 end

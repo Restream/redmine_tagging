@@ -17,11 +17,17 @@ env:
   - REDMINE_VER=2.3.4 DB=mysql
   - REDMINE_VER=2.4.5 DB=mysql
   - REDMINE_VER=2.5.1 DB=mysql
+  - REDMINE_VER=2.5.2 DB=mysql
+  - REDMINE_VER=2.5.3 DB=mysql
+  - REDMINE_VER=2.6.0 DB=mysql
   - REDMINE_VER=2.1.6 DB=postgresql
   - REDMINE_VER=2.2.4 DB=postgresql
   - REDMINE_VER=2.3.4 DB=postgresql
   - REDMINE_VER=2.4.5 DB=postgresql
   - REDMINE_VER=2.5.1 DB=postgresql
+  - REDMINE_VER=2.5.2 DB=postgresql
+  - REDMINE_VER=2.5.3 DB=postgresql
+  - REDMINE_VER=2.6.0 DB=postgresql
 
 matrix:
   exclude:
