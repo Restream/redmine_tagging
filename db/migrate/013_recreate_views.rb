@@ -1,15 +1,39 @@
 class RecreateViews < ActiveRecord::Migration
   def self.up
-    drop_view :issue_tags
-    drop_view :wiki_page_tags
-    create_view :issue_tags, "select taggings.id as id, tags.name as tag, taggings.taggable_id as issue_id from taggings join tags on taggings.tag_id = tags.id where taggable_type = 'Issue'" 
-    create_view :wiki_page_tags, "select taggings.id as id, tags.name as tag, taggings.taggable_id as wiki_page_id from taggings join tags on taggings.tag_id = tags.id where taggable_type = 'WikiPage'" 
+    execute 'DROP VIEW issue_tags'
+    execute 'DROP VIEW wiki_page_tags'
+
+    execute <<-SQL
+      CREATE VIEW issue_tags AS
+      SELECT
+        taggings.id AS id,
+        tags.name AS tag,
+        taggings.taggable_id AS issue_id
+      FROM
+        taggings
+          JOIN tags ON taggings.tag_id = tags.id
+      WHERE
+        taggable_type = 'Issue'
+    SQL
+
+    execute <<-SQL
+      CREATE VIEW wiki_page_tags AS
+      SELECT
+        taggings.id,
+        tags.name AS tag,
+        taggings.taggable_id AS wiki_page_id
+      FROM
+        taggings
+          JOIN tags ON taggings.tag_id = tags.id
+      WHERE
+        taggable_type = 'WikiPage'
+    SQL
   end
 
   def self.down
     # noop
   end
-  
+
   def up
     self.class.up
   end

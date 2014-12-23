@@ -22,6 +22,8 @@ class IssueTagsController < ApplicationController
       end
     end
 
+    tag.taggings.reload
+
     if tag.taggings.empty?
       tag.destroy
     end

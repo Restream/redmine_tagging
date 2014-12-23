@@ -1,5 +1,6 @@
 class IssueTag < ActiveRecord::Base
-  set_primary_key :id
+  self.table_name = :issue_tags
+  self.primary_key = :id
 
   belongs_to :issue
 
@@ -43,4 +44,7 @@ class IssueTag < ActiveRecord::Base
         by s.id, s.is_closed, t.id")
   end
 
+  def to_s
+    name
+  end
 end

@@ -94,6 +94,7 @@ if (!Array.prototype.indexOf) {
   }
 
   function tags_to_array(tags) {
+    if (!tags) tags = '';
     dirty_items = tags.split(/[,#\s]+/)
 
     dirty_items = $.map(dirty_items, function(val, i){

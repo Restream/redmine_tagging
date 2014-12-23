@@ -9,7 +9,7 @@ module TaggingPlugin
       end
 
       def to_string(tags)
-        tags.sort.collect{|tag| tag.gsub(/^#/, '')}.join(' ')
+        tags.sort_by { |t| t.downcase }.map{ |tag| tag.gsub(/^#/, '') }.join(' ')
       end
     end
   end

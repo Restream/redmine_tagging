@@ -1,4 +1,4 @@
-module TaggingHelper 
+module TaggingHelper
   def link_to_project_tag_filter(project, tag, options = {}, html_options = {})
     options.reverse_merge!({
       :status => 'o',
@@ -10,7 +10,7 @@ module TaggingHelper
       'f' => ['tags', 'status_id'],
       'op[tags]' => '=',
       'op[status_id]' => options[:status],
-      'v[tags][]' => tag,
+      'v[tags][]' => tag_without_sharp(tag),
       'v[status_id][]' => 1
     }
 
@@ -22,7 +22,7 @@ module TaggingHelper
   end
 
   def tag_without_sharp(tag)
-    tag[1..-1]
+    tag.to_s.gsub /^\s*#/, ''
   end
 
   def tag_cloud_in_project(project, &each_tag)
@@ -56,7 +56,7 @@ module TaggingHelper
 
       dynamic_fonts_enabled = (Setting.plugin_redmine_tagging[:dynamic_font_size] == "1")
 
-      tags.keys.sort.each do |tag|
+      tags.keys.sort_by { |t| t.downcase }.each do |tag|
         if dynamic_fonts_enabled && (distance != 0)
           count = tags[tag]
           factor = (count - min_max[0]).to_f / distance

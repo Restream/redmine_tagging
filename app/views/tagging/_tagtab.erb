@@ -1,4 +1,6 @@
-<% tags = @project.issues.map{ |i| i.taggings.map{ |tg| tg.tag } }.flatten.uniq %>
+<%
+   tags = @project.tags
+%>
 
 <% if tags.any? %>
 <table class="list">
