@@ -72,9 +72,9 @@ Note that inline tags are saved when the object body is rendered. That's why if 
 Adding `{{tagcloud}}` will generate a tag cloud, which will be displayed in the sidebar.  
 ![tag cloud](tagging_3.PNG)
 
-The most often used tags are displayed n a larger font.
+The most often used tags are displayed in a larger font.
 
-By default, inline tag editing is disabled. In this case, you should type tags into the **Tags** field to add them to an issue or wiki page. You can use spaces or commas as tag separators.  
+By default, inline tag editing is disabled. In this mode, you can type tags into the **Tags** field to add them to an issue or wiki page. You can use spaces or commas as tag separators.  
 ![tags field](tagging_4.PNG)
 
 You can click the **Project tags** link below the **Tags** field to view all the project tags and select the required ones.  
@@ -86,10 +86,8 @@ The autocomplete feature will suggest the available tags as you start typing the
 All tags added to project issues are displayed on the **Tags** tab of the project settings. To detach a tag from an issue, click the **Detach** link.  
 ![tags tab](tagging_7.PNG)
 
-You can search for issues using tags:  
-![tag search](tagging_8.PNG)
-
-You can also create issue filters based on tags:
+Tags can be used to search for issues and create issue filters:  
+![tag search](tagging_8.PNG)  
 ![tag filters](tagging_9.PNG)
 
 ## License
