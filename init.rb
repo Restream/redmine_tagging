@@ -19,9 +19,9 @@ end
 require_dependency 'tagging_plugin/tagging_hooks'
 
 Redmine::Plugin.register :redmine_tagging do
-  name 'Redmine Tagging plugin'
-  author 'friflaj, nettsundere, nodecarter'
-  description 'Wiki/issues tagging'
+  name 'Redmine Tagging Plugin'
+  author 'friflaj, nettsundere, Undev'
+  description 'This plugin adds tagging features to Redmine.'
   version '0.1.2'
 
   settings :default => { :dynamic_font_size => "1", :sidebar_tagcloud => "1", :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
