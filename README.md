@@ -11,7 +11,7 @@ This plugin adds useful tagging features to Redmine:
 * Issue filters based on tags
 * Batch assignment and detachment of tags
 
-The initial authors of the plugin are [friflaj](https://github.com/friflaj) and [Vladimir Kiselev](https://github.com/nettsundere).
+The initial authors of the plugin are [Emiliano Heyns](mailto:emiliano.heyns@gmail.com) and [Vladimir Kiselev](https://github.com/nettsundere).
 
 ## Installation
 
