@@ -1,4 +1,4 @@
-Redmine Tagging Plugin
+# Redmine Tagging Plugin
 
 [![Build Status](https://travis-ci.org/Undev/redmine_tagging.png)](https://travis-ci.org/Undev/redmine_tagging)
 [![Code Climate](https://codeclimate.com/github/Undev/redmine_tagging.png)](https://codeclimate.com/github/Undev/redmine_tagging)
@@ -10,6 +10,7 @@ This plugin adds useful tagging features to Redmine:
 * Redmine search integration (possibility to search for #tag to find wikis/issues)
 * Issue filters based on tags
 * Batch assignment and detachment of tags
+* Logging tag changes
 
 The initial authors of the plugin are [Emiliano Heyns](mailto:emiliano.heyns@gmail.com) and [Vladimir Kiselev](https://github.com/nettsundere).
 
