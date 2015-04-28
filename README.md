@@ -90,3 +90,7 @@ All tags added to project issues are displayed on the **Tags** tab of the projec
 Tags can be used to search for issues and create issue filters:  
 ![tag search](tagging_8.PNG)  
 ![tag filters](tagging_9.PNG)
+
+## Maintainers
+
+Danil Tashkinov, [github.com/nodecarter](https://github.com/nodecarter)
