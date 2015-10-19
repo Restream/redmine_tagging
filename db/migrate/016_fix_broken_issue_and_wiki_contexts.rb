@@ -7,10 +7,7 @@ class FixBrokenIssueAndWikiContexts < ActiveRecord::Migration
 
   def self.up
 
-    issue_condition = ["taggable_type = ?", "Issue"]
-    wiki_condition = ["taggable_type = ?", "WikiPage"]
-
-    ActsAsTaggableOn::Tagging.find_each(:conditions => issue_condition) do |tagging|
+    ActsAsTaggableOn::Tagging.where("taggable_type = ?", "Issue").find_each do |tagging|
       if tagged_issue = Issue.find_by_id(tagging.taggable_id)
         context_should_be = TaggingPlugin::ContextHelper.context_for(tagged_issue.project)
         if tagging.context != context_should_be 
@@ -22,7 +19,7 @@ class FixBrokenIssueAndWikiContexts < ActiveRecord::Migration
       end
     end
 
-    ActsAsTaggableOn::Tagging.find_each(:conditions => wiki_condition) do |tagging|
+    ActsAsTaggableOn::Tagging.where("taggable_type = ?", "WikiPage").find_each do |tagging|
       if tagged_page = WikiPage.find_by_id(tagging.taggable_id)
         project = tagged_page.wiki.project
         context_should_be = TaggingPlugin::ContextHelper.context_for(project)

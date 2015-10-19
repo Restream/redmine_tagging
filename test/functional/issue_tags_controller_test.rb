@@ -25,7 +25,7 @@ class IssueTagsControllerTest < ActionController::TestCase
   def test_should_destroy_issue_tag_in_case_of_changed_project
     @issue_with_tags.project = @another_project
 
-    some_tracker = @issue_with_tags.project.trackers.create!(:name => "test")
+    some_tracker = @issue_with_tags.project.trackers.create!(:name => "test", :default_status => IssueStatus.first)
     @issue_with_tags.tracker = some_tracker
     @issue_with_tags.save!
     @issue_with_tags.reload

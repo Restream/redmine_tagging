@@ -5,14 +5,26 @@ ActionDispatch::Callbacks.to_prepare do
   require 'tagging_plugin/api_template_handler_patch'
   require 'redmine_tagging'
 
-  if !Issue.searchable_options[:include].include? :issue_tags
+  unless Issue.searchable_options[:include] && Issue.searchable_options[:include].include?(:issue_tags)
     Issue.searchable_options[:columns] << "#{IssueTag.table_name}.tag"
+
+    # For redmine < 3
+    Issue.searchable_options[:include] ||= []
     Issue.searchable_options[:include] << :issue_tags
+
+    # For redmine > 3
+    Issue.searchable_options[:scope] = -> { Issue.includes(:issue_tags) }
   end
 
-  if !WikiPage.searchable_options[:include].include? :wiki_page_tags
+  unless WikiPage.searchable_options[:include] && WikiPage.searchable_options[:include].include?(:wiki_page_tags)
     WikiPage.searchable_options[:columns] << "#{WikiPageTag.table_name}.tag"
+
+    # For redmine < 3
+    WikiPage.searchable_options[:include] ||= []
     WikiPage.searchable_options[:include] << :wiki_page_tags
+
+    # For redmine > 3
+    WikiPage.searchable_options[:scope] = -> { WikiPage.includes(:wiki_page_tags) }
   end
 end
 
@@ -22,7 +34,7 @@ Redmine::Plugin.register :redmine_tagging do
   name 'Redmine Tagging Plugin'
   author 'friflaj, nettsundere, Undev'
   description 'This plugin adds tagging features to Redmine.'
-  version '0.1.2'
+  version '0.1.3'
 
   settings :default => { :dynamic_font_size => "1", :sidebar_tagcloud => "1", :wiki_pages_inline  => "0", :issues_inline => "0" }, :partial => 'tagging/settings'
 

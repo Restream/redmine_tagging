@@ -18,7 +18,7 @@ class IssuesControllerTest < ActionController::TestCase
     @project_with_tags = @issue_with_tags.project
     @another_project = Project.generate!
 
-    Issue.stubs(:allowed_target_projects_on_move).returns(Project.scoped)
+    Issue.stubs(:allowed_target_projects_on_move).returns(Project.where(nil))
   end
 
   def test_can_index_issues_when_custom_fields_available

@@ -25,7 +25,7 @@ namespace :redmine do
         end
       else
         puts "Removing inline tags from issues"
-        Issue.find(:all, :conditions => "description like '%{{tag(%'").each {|issue|
+        Issue.where("description like '%{{tag(%'").each {|issue|
           next if issue.description.blank?
 
           issue.description = issue.description.gsub(/[{]{2}tag[(][^)]*[)][}]{2}/i, '')
@@ -56,7 +56,7 @@ namespace :redmine do
       else
         puts "Removing inline tags from wikis"
 
-        WikiContent.find(:all, :conditions => "text like '%{{tag(%'").each {|content|
+        WikiContent.where("text like '%{{tag(%'").each {|content|
           next if content.text.blank?
 
           content.text = content.text.gsub(/[{]{2}tag[(][^)]*[)][}]{2}/i, '')
