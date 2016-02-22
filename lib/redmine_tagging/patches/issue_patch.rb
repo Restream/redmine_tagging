@@ -36,8 +36,10 @@ module RedmineTagging::Patches::IssuePatch
   end
 
   def init_journal_with_tags(user, notes = "")
-    tag_context = TaggingPlugin::ContextHelper.context_for(project)
-    @issue_tags_before_change = TaggingPlugin::TagsHelper.to_string(tag_list_on(tag_context))
+    unless project.nil?
+      tag_context = TaggingPlugin::ContextHelper.context_for(project)
+      @issue_tags_before_change = TaggingPlugin::TagsHelper.to_string(tag_list_on(tag_context))
+    end
     init_journal_without_tags(user, notes)
   end
 
