@@ -15,7 +15,7 @@ ActionDispatch::Callbacks.to_prepare do
     Issue.searchable_options[:include] << :issue_tags
 
     # For redmine > 3
-    Issue.searchable_options[:scope] = -> { Issue.includes(:issue_tags) }
+    Issue.searchable_options[:scope] = proc { Issue.includes(:issue_tags) }
   end
 
   unless WikiPage.searchable_options[:include] && WikiPage.searchable_options[:include].include?(:wiki_page_tags)
@@ -26,7 +26,7 @@ ActionDispatch::Callbacks.to_prepare do
     WikiPage.searchable_options[:include] << :wiki_page_tags
 
     # For redmine > 3
-    WikiPage.searchable_options[:scope] = -> { WikiPage.includes(:wiki_page_tags) }
+    WikiPage.searchable_options[:scope] = proc { WikiPage.includes(:wiki_page_tags) }
   end
 end
 
