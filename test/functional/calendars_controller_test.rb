@@ -1,16 +1,31 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CalendarsControllerTest < ActionController::TestCase
-  fixtures :projects, :issues, :users, :trackers
+  fixtures :projects,
+    :users,
+    :roles,
+    :members,
+    :member_roles,
+    :trackers,
+    :projects_trackers,
+    :enabled_modules,
+    :issue_statuses,
+    :issues,
+    :enumerations,
+    :custom_fields,
+    :custom_values,
+    :custom_fields_trackers
 
   def setup
     @request.session[:user_id] = 2
-    User.stubs(:current).returns(User.find_by_id(2))
-    User.any_instance.stubs(:allowed_to?).returns(true)
-    Mailer.stubs(:deliver_mail).returns(true)
+
     @some_tags = '#1, #2, #3,#4,#5'
-    @issue_with_tags = setup_issue_with_tags(@some_tags)
-    @project_with_tags = @issue_with_tags.project
+
+    @project_with_tags = Project.find(1)
+
+    @issue_with_tags = Issue.find(1)
+    @issue_with_tags.tags_to_update = @some_tags
+    @issue_with_tags.save!
   end
 
   def test_can_show_calendar

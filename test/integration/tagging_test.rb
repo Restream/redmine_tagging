@@ -1,7 +1,20 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class TaggingTest < ActionDispatch::IntegrationTest
-  fixtures :projects, :issues, :users, :trackers, :issue_statuses
+  fixtures :projects,
+    :users,
+    :roles,
+    :members,
+    :member_roles,
+    :trackers,
+    :projects_trackers,
+    :enabled_modules,
+    :issue_statuses,
+    :issues,
+    :enumerations,
+    :custom_fields,
+    :custom_values,
+    :custom_fields_trackers
 
   def setup
     Mailer.stubs(:deliver_mail).returns(true)
@@ -10,12 +23,19 @@ class TaggingTest < ActionDispatch::IntegrationTest
     User.any_instance.stubs(:allowed_to?).returns(true)
 
     @some_tags = '#1, #2, #3,#4,#5'
-    @issue_with_tags = setup_issue_with_tags(@some_tags)
+
+    @project_with_tags = Project.find(1)
+    @another_project = Project.find(2)
+
+    @issue_with_tags = Issue.find(1)
+    @issue_with_tags.tags_to_update = @some_tags
+    @issue_with_tags.save!
+
+    @issue_without_tags = Issue.find(2)
+
     @wiki_page_with_tags = setup_wiki_page_with_tags(@some_tags)
     @wiki_page_with_tags_content = @wiki_page_with_tags.content
 
-    @project_with_tags = @issue_with_tags.project
-    @another_project = Project.generate!
     @project_with_wiki_tags = @wiki_page_with_tags.project
 
     @another_project_context = TaggingPlugin::ContextHelper.context_for(@another_project)
