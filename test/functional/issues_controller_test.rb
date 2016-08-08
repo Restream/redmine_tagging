@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class IssuesControllerTest < ActionController::TestCase
   fixtures :projects,
-    :users, :email_addresses,
+    :users,
     :roles,
     :members,
     :member_roles,
