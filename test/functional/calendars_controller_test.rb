@@ -8,13 +8,13 @@ class CalendarsControllerTest < ActionController::TestCase
     User.stubs(:current).returns(User.find_by_id(2))
     User.any_instance.stubs(:allowed_to?).returns(true)
     Mailer.stubs(:deliver_mail).returns(true)
-    @some_tags = "#1, #2, #3,#4,#5"
+    @some_tags = '#1, #2, #3,#4,#5'
     @issue_with_tags = setup_issue_with_tags(@some_tags)
     @project_with_tags = @issue_with_tags.project
   end
 
   def test_can_show_calendar
-    get :show, :project_id => @project_with_tags.id
+    get :show, project_id: @project_with_tags.id
     assert_response :success
   end
 end

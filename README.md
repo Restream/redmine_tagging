@@ -1,7 +1,7 @@
 # Redmine Tagging Plugin
 
-[![Build Status](https://travis-ci.org/Undev/redmine_tagging.png)](https://travis-ci.org/Undev/redmine_tagging)
-[![Code Climate](https://codeclimate.com/github/Undev/redmine_tagging.png)](https://codeclimate.com/github/Undev/redmine_tagging)
+[![Build Status](https://travis-ci.org/Restream/redmine_tagging.png)](https://travis-ci.org/Restream/redmine_tagging)
+[![Code Climate](https://codeclimate.com/github/Restream/redmine_tagging.png)](https://codeclimate.com/github/Restream/redmine_tagging)
 
 This plugin adds useful tagging features to Redmine:
 
@@ -29,7 +29,7 @@ The initial authors of the plugin are [Emiliano Heyns](mailto:emiliano.heyns@gma
             
       Copy the plugin from GitHub using the following commands:
       
-            git clone https://github.com/Undev/redmine_tagging.git plugins/redmine_tagging
+            git clone https://github.com/Restream/redmine_tagging.git plugins/redmine_tagging
             
 2. Update the Gemfile.lock file by running the following commands:  
 
@@ -54,7 +54,7 @@ Now you should be able to see the plugin in **Administration > Plugins**.
 The plugin enables you to add tags to wiki and issue pages using either the **Tags** field or inline tags. To switch between these two modes, you should enable or disable the corresponding check boxes in the plugin settings. 
 
 To switch to inline tag editing, go to **Administration > Plugins**, click **Configure**, select the corresponding check boxes and click **Apply**.  
-![inline editing](tagging_1.PNG)
+![inline editing](doc/tagging_1.PNG)
 
 After changing the settings, run the following command:
 
@@ -66,30 +66,30 @@ Inline tags can be added using the following syntax:
 
     {{tag(tag_name)}}
 
-![inline tags](tagging_2.PNG)
+![inline tags](doc/tagging_2.PNG)
 
 Note that inline tags are saved when the object body is rendered. That's why if you want to remove all tags from an object, you must first add `{{tag}}` to its body to actually clear the tags. After that you can remove `{{tag}}` from the object body.
 
 Adding `{{tagcloud}}` will generate a tag cloud, which will be displayed in the sidebar.  
-![tag cloud](tagging_3.PNG)
+![tag cloud](doc/tagging_3.PNG)
 
 The most often used tags are displayed in a larger font.
 
 By default, inline tag editing is disabled. In this mode, you can type tags into the **Tags** field to add them to an issue or wiki page. You can use spaces or commas as tag separators.  
-![tags field](tagging_4.PNG)
+![tags field](doc/tagging_4.PNG)
 
 You can click the **Project tags** link below the **Tags** field to view all the project tags and select the required ones.  
-![project tags](tagging_5.PNG)
+![project tags](doc/tagging_5.PNG)
 
 The autocomplete feature will suggest the available tags as you start typing the tag name in the **Tags** field.  
-![tags autocomplete](tagging_6.PNG)
+![tags autocomplete](doc/tagging_6.PNG)
 
 All tags added to project issues are displayed on the **Tags** tab of the project settings. To detach a tag from an issue, click the **Detach** link.  
-![tags tab](tagging_7.PNG)
+![tags tab](doc/tagging_7.PNG)
 
 Tags can be used to search for issues and create issue filters:  
-![tag search](tagging_8.PNG)  
-![tag filters](tagging_9.PNG)
+![tag search](doc/tagging_8.PNG)  
+![tag filters](doc/tagging_9.PNG)
 
 ## Maintainers
 

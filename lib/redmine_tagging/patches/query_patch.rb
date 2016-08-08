@@ -40,11 +40,11 @@ module RedmineTagging::Patches::QueryPatch
 
     {
         'tags' => {
-            :type => :list_optional,
-            :values => tags,
-            :name => l(:field_tags),
-            :order => 21,
-            :field => 'tags'
+          type:   :list_optional,
+          values: tags,
+          name:   l(:field_tags),
+          order:  21,
+          field:  'tags'
         }
     }
   end

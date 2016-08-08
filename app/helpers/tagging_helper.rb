@@ -1,16 +1,16 @@
 module TaggingHelper
   def link_to_project_tag_filter(project, tag, options = {}, html_options = {})
     options.reverse_merge!({
-      :status => 'o',
-      :title => tag
+      status: 'o',
+      title:  tag
     })
 
     opts = {
-      'set_filter' => 1,
-      'f' => ['tags', 'status_id'],
-      'op[tags]' => '=',
-      'op[status_id]' => options[:status],
-      'v[tags][]' => tag_without_sharp(tag),
+      'set_filter'     => 1,
+      'f'              => ['tags', 'status_id'],
+      'op[tags]'       => '=',
+      'op[status_id]'  => options[:status],
+      'v[tags][]'      => tag_without_sharp(tag),
       'v[status_id][]' => 1
     }
 

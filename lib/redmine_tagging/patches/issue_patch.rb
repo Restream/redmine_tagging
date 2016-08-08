@@ -26,10 +26,11 @@ module RedmineTagging::Patches::IssuePatch
       before = @issue_tags_before_change
       after = TaggingPlugin::TagsHelper.to_string(tag_list_on(tag_context))
       unless before == after
-        @current_journal.details << JournalDetail.new(:property => 'attr',
-                                                      :prop_key => 'tags',
-                                                      :old_value => before,
-                                                      :value => after)
+        @current_journal.details << JournalDetail.new(
+          property:  'attr',
+          prop_key:  'tags',
+          old_value: before,
+          value:     after)
       end
     end
     create_journal_without_tags
@@ -73,7 +74,7 @@ module RedmineTagging::Patches::IssuePatch
     if project_id_changed? && !new_record?
       @new_project_id = project_id
 
-      taggings.update_all(:context => project_context)
+      taggings.update_all(context: project_context)
     end
 
     if @tags_to_update

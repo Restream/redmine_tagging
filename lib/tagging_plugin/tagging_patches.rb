@@ -15,7 +15,7 @@ module TaggingPlugin
     module InstanceMethods
       def project_settings_tabs_with_tags_tab
         tabs = project_settings_tabs_without_tags_tab
-        tabs << { :name => 'tags', :partial => 'tagging/tagtab', :label => :tagging_tab_label}
+        tabs << { name: 'tags', partial: 'tagging/tagtab', label: :tagging_tab_label }
         return tabs
       end
     end

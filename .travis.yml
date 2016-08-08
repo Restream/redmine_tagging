@@ -14,9 +14,11 @@ env:
   - REDMINE_VER=2.3.4 DB=mysql
   - REDMINE_VER=2.6.7 DB=mysql
   - REDMINE_VER=3.1.1 DB=mysql
+  - REDMINE_VER=3.3.0 DB=mysql
   - REDMINE_VER=2.3.4 DB=postgresql
   - REDMINE_VER=2.6.7 DB=postgresql
   - REDMINE_VER=3.1.1 DB=postgresql
+  - REDMINE_VER=3.3.0 DB=postgresql
 
 before_install:
   - export PLUGIN_NAME=redmine_tagging
@@ -24,17 +26,17 @@ before_install:
   - svn co http://svn.redmine.org/redmine/tags/$REDMINE_VER $REDMINE_PATH
   - ln -s $TRAVIS_BUILD_DIR $REDMINE_PATH/plugins/$PLUGIN_NAME
   - cp config/database-$DB-travis.yml $REDMINE_PATH/config/database.yml
+  - cp config/configuration-travis.yml $REDMINE_PATH/config/configuration.yml
   - cd $REDMINE_PATH
 
 before_script:
-  - echo "config.active_record.schema_format = :sql" >> config/additional_environment.rb
+  - export RAILS_ENV=test
   - bundle exec rake db:create
   - bundle exec rake db:migrate
   - bundle exec rake acts_as_taggable_on_engine:install:migrations
   - bundle exec rake db:migrate
   - bundle exec rake redmine:plugins:migrate
-  - bundle exec rake db:structure:dump
 
 script:
-  - bundle exec rake redmine:plugins:test NAME=$PLUGIN_NAME
+  - bundle exec rake redmine_tagging:test
 

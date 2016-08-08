@@ -10,7 +10,7 @@ class IssueTagsController < ApplicationController
 
     context = TaggingPlugin::ContextHelper.context_for(@project)
 
-    tag.taggings.where(:context => context).find_each do |tagging|
+    tag.taggings.where(context: context).find_each do |tagging|
       if tagging.taggable_type = "Issue"
         affected_issue = Issue.find(tagging.taggable_id)
         affected_issue.init_journal(User.current)
@@ -29,6 +29,6 @@ class IssueTagsController < ApplicationController
     end
 
     flash[:notice] = l(:notice_successful_detached)
-    redirect_to :controller => 'projects', :action => 'settings', :tab => 'tags', :id => @project
+    redirect_to controller: 'projects', action: 'settings', tab: 'tags', id: @project
   end
 end
