@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class TaggingTest < Redmine::IntegrationTest
+class TaggingTest < ActionDispatch::IntegrationTest
   fixtures :projects, :issues, :users, :trackers, :issue_statuses
 
   def setup
