@@ -1,7 +1,7 @@
 # Redmine Tagging Plugin
 
-[![Build Status](https://travis-ci.org/Restream/redmine_tagging.png)](https://travis-ci.org/Restream/redmine_tagging)
-[![Code Climate](https://codeclimate.com/github/Restream/redmine_tagging.png)](https://codeclimate.com/github/Restream/redmine_tagging)
+[![Build Status](https://travis-ci.org/Restream/redmine_tagging.svg?branch=master)](https://travis-ci.org/Restream/redmine_tagging)
+[![Code Climate](https://codeclimate.com/github/Restream/redmine_tagging/badges/gpa.svg)](https://codeclimate.com/github/Restream/redmine_tagging)
 
 This plugin adds useful tagging features to Redmine:
 
