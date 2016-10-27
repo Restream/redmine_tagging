@@ -1,6 +1,3 @@
-require_dependency 'issue'
-require_dependency 'wiki_page'
-
 module TaggingPlugin
 
   module ProjectsHelperPatch
@@ -18,35 +15,6 @@ module TaggingPlugin
         tabs << { name: 'tags', partial: 'tagging/tagtab', label: :tagging_tab_label }
         return tabs
       end
-    end
-  end
-
-  module WikiPagePatch
-    def self.included(base) # :nodoc:
-      base.send(:include, InstanceMethods)
-
-      base.class_eval do
-        unloadable
-
-        attr_writer :tags_to_update
-
-        before_save :update_tags
-        acts_as_taggable
-
-        has_many :wiki_page_tags
-      end
-    end
-
-    module InstanceMethods
-      private
-        def update_tags
-          if @tags_to_update
-            project_context = ContextHelper.context_for(project)
-            set_tag_list_on(project_context, @tags_to_update)
-          end
-
-          true
-        end
     end
   end
 
@@ -75,8 +43,5 @@ module TaggingPlugin
   end
 end
 
-WikiPage.send(:include, TaggingPlugin::WikiPagePatch) unless WikiPage.included_modules.include? TaggingPlugin::WikiPagePatch
-
 WikiController.send(:include, TaggingPlugin::WikiControllerPatch) unless WikiController.included_modules.include? TaggingPlugin::WikiControllerPatch
-
 ProjectsHelper.send(:include, TaggingPlugin::ProjectsHelperPatch) unless ProjectsHelper.included_modules.include? TaggingPlugin::ProjectsHelperPatch

@@ -33,8 +33,7 @@ The initial authors of the plugin are [Emiliano Heyns](mailto:emiliano.heyns@gma
             
 2. Update the Gemfile.lock file by running the following commands:  
 
-         rm Gemfile.lock  
-         bundle install
+        bundle install
             
 3. Run the migrations generator to create tables for tags and associations:
 
@@ -48,6 +47,21 @@ The initial authors of the plugin are [Emiliano Heyns](mailto:emiliano.heyns@gma
 5. Restart Redmine.
 
 Now you should be able to see the plugin in **Administration > Plugins**.
+
+### For MySql users
+You can circumvent at any time the problem of special characters [issue 623](https://github.com/mbleigh/acts-as-taggable-on/issues/623) by setting in an initializer file:
+
+```ruby
+ActsAsTaggableOn.force_binary_collation = true
+```
+
+Or by running this rake task:
+
+```shell
+bundle exec rake acts_as_taggable_on_engine:tag_names:collate_bin
+```
+
+See the [configuration](https://github.com/mbleigh/acts-as-taggable-on#configuration) section in acts-as-taggable-on gem for more details.
 
 ## Usage
 
@@ -94,3 +108,7 @@ Tags can be used to search for issues and create issue filters:
 ## Maintainers
 
 Danil Tashkinov, [github.com/nodecarter](https://github.com/nodecarter)
+
+## Thanks to
+
+* https://github.com/jkraemer

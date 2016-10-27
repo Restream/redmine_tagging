@@ -4,7 +4,7 @@ Redmine::Plugin.register :redmine_tagging do
   name 'Redmine Tagging Plugin'
   author 'Restream'
   description 'This plugin adds tagging features to Redmine.'
-  version '0.1.4'
+  version '0.1.5'
 
   settings default: {
       dynamic_font_size: '1',
@@ -98,28 +98,6 @@ ActionDispatch::Callbacks.to_prepare do
   require 'redmine_tagging'
   require File.expand_path('../app/helpers/tagging_helper', __FILE__)
   ActionView::Base.send :include, TaggingHelper
-
-  unless Issue.searchable_options[:include] && Issue.searchable_options[:include].include?(:issue_tags)
-    Issue.searchable_options[:columns] << "#{IssueTag.table_name}.tag"
-
-    # For redmine < 3
-    Issue.searchable_options[:include] ||= []
-    Issue.searchable_options[:include] << :issue_tags
-
-    # For redmine > 3
-    Issue.searchable_options[:scope] = proc { Issue.includes(:issue_tags) }
-  end
-
-  unless WikiPage.searchable_options[:include] && WikiPage.searchable_options[:include].include?(:wiki_page_tags)
-    WikiPage.searchable_options[:columns] << "#{WikiPageTag.table_name}.tag"
-
-    # For redmine < 3
-    WikiPage.searchable_options[:include] ||= []
-    WikiPage.searchable_options[:include] << :wiki_page_tags
-
-    # For redmine > 3
-    WikiPage.searchable_options[:scope] = proc { WikiPage.includes(:wiki_page_tags) }
-  end
 end
 
 require_dependency 'tagging_plugin/tagging_hooks'
