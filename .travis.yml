@@ -35,6 +35,7 @@ before_script:
   - bundle exec rake acts_as_taggable_on_engine:install:migrations
   - bundle exec rake db:migrate
   - bundle exec rake redmine:plugins:migrate
+  - bundle exec rake db:structure:dump
 
 script:
   - export RUBYOPT="-W0"
