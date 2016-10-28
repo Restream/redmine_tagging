@@ -5,19 +5,15 @@ services:
   - postgresql
 
 rvm:
-  - 2.0.0
+  - 2.3.1
 
 gemfile:
   - $REDMINE_PATH/Gemfile
 
 env:
-  - REDMINE_VER=2.3.4 DB=mysql
-  - REDMINE_VER=2.6.9 DB=mysql
   - REDMINE_VER=3.1.7 DB=mysql
   - REDMINE_VER=3.2.4 DB=mysql
   - REDMINE_VER=3.3.1 DB=mysql
-  - REDMINE_VER=2.3.4 DB=postgresql
-  - REDMINE_VER=2.6.9 DB=postgresql
   - REDMINE_VER=3.1.7 DB=postgresql
   - REDMINE_VER=3.2.4 DB=postgresql
   - REDMINE_VER=3.3.1 DB=postgresql
@@ -41,5 +37,6 @@ before_script:
   - bundle exec rake redmine:plugins:migrate
 
 script:
+  - export RUBYOPT="-W0"
   - bundle exec rake redmine:plugins:test
 
