@@ -25,6 +25,7 @@ before_install:
   - ln -s $TRAVIS_BUILD_DIR $REDMINE_PATH/plugins/$PLUGIN_NAME
   - cp config/database-$DB-travis.yml $REDMINE_PATH/config/database.yml
   - cp config/configuration-travis.yml $REDMINE_PATH/config/configuration.yml
+  - echo "config.active_record.schema_format = :sql" > $REDMINE_PATH/config/additional_environment.rb
   - cd $REDMINE_PATH
 
 before_script:
@@ -34,7 +35,9 @@ before_script:
   - bundle exec rake acts_as_taggable_on_engine:install:migrations
   - bundle exec rake db:migrate
   - bundle exec rake redmine:plugins:migrate
+  - bundle exec rake db:structure:dump
 
 script:
-  - bundle exec rake redmine_tagging:test
+  - export RUBYOPT="-W0"
+  - bundle exec rake redmine:plugins:test
 

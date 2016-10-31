@@ -1,5 +1,5 @@
 class ScrubBody < ActiveRecord::Migration
-  def self.up
+  def up
     Issue.where("description like '%{{tag(%'").each {|issue|
       issue.description = issue.description.gsub(/[{]{2}tag[(][^)]*[)][}]{2}/i, '')
       issue.save!
@@ -27,15 +27,8 @@ class ScrubBody < ActiveRecord::Migration
       tag.save
   end
 
-  def self.down
-  end
-
-  def up
-    self.class.up
-  end
-
   def down
-    self.class.down
+    # noop
   end
 end
 

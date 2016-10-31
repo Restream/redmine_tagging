@@ -1,7 +1,6 @@
-class RecreateViews < ActiveRecord::Migration
-  def self.up
-    execute 'DROP VIEW issue_tags'
-    execute 'DROP VIEW wiki_page_tags'
+class CreateViews < ActiveRecord::Migration
+  def up
+    execute 'DROP VIEW IF EXISTS issue_tags'
 
     execute <<-SQL
       CREATE VIEW issue_tags AS
@@ -15,6 +14,8 @@ class RecreateViews < ActiveRecord::Migration
       WHERE
         taggable_type = 'Issue'
     SQL
+
+    execute 'DROP VIEW IF EXISTS wiki_page_tags'
 
     execute <<-SQL
       CREATE VIEW wiki_page_tags AS
@@ -30,16 +31,9 @@ class RecreateViews < ActiveRecord::Migration
     SQL
   end
 
-  def self.down
-    # noop
-  end
-
-  def up
-    self.class.up
-  end
-
   def down
-    self.class.down
+    execute 'DROP VIEW issue_tags'
+    execute 'DROP VIEW wiki_page_tags'
   end
 end
 
