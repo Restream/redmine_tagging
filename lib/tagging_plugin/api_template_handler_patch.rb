@@ -20,8 +20,8 @@ module TaggingPlugin
 
       def replace_if(template, regexp, new_path)
         if template.identifier =~ regexp
-          source = File.open(
-              File.join(Rails.root, 'plugins/redmine_tagging/', new_path)).read
+          new_template_filename = File.join(__dir__, '../..', new_path)
+          source = File.open(new_template_filename).read
           identifier = template.identifier
           handler = template.handler
           template = ActionView::Template.new(source, identifier, handler, {})
