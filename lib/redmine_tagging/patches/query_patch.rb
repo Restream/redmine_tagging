@@ -43,7 +43,7 @@ module RedmineTagging::Patches::QueryPatch
       values: tags,
       name:   l(:field_tags),
       order:  21,
-    })
+    }
     filter = ActiveSupport::OrderedHash.new
     filter[field] = QueryFilter.new(field, options)
     filter
