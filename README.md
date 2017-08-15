@@ -42,7 +42,7 @@ The initial authors of the plugin are [Emiliano Heyns](mailto:emiliano.heyns@gma
 4. Run the following commands to upgrade your database (make a database backup before):  
 
         bundle exec rake db:migrate RAILS_ENV=production
-        bundle exec rake db:migrate_plugins RAILS_ENV=production
+        bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 
 5. Restart Redmine.
 
