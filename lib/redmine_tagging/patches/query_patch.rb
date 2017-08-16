@@ -37,16 +37,16 @@ module RedmineTagging::Patches::QueryPatch
     tags = tags.sort_by { |t| t.name.downcase }.map do |tag|
       [tag_without_sharp(tag), tag_without_sharp(tag)]
     end
-
-    {
-        'tags' => {
-          type:   :list_optional,
-          values: tags,
-          name:   l(:field_tags),
-          order:  21,
-          field:  'tags'
-        }
+    field = 'tags'
+    options = {
+      type:   :list_optional,
+      values: tags,
+      name:   l(:field_tags),
+      order:  21,
     }
+    filter = ActiveSupport::OrderedHash.new
+    filter[field] = QueryFilter.new(field, options)
+    filter
   end
 
   def sql_for_field_with_tags(field, operator, v, db_table, db_field, is_custom_filter = false)
